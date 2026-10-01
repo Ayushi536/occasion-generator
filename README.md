@@ -722,6 +722,20 @@ occasion-generator/
 
 
 
+**---
+
+## 🚀 Production Deployment
+
+**Production URL:** https://occasion-generator.vercel.app
+
+**Vercel Project:** https://vercel.com/ayu704sharma32-8523s-projects/occasion-generator
+
+**Deployment status:** ✅ READY
+
+**Live check:** ✅ HTTP 200
+
+---
+
 **## 🔭 Current Status**
 
 
@@ -748,7 +762,7 @@ occasion-generator/
 
 \| GitHub Actions CI | ✅ committed and integrated |
 
-\| Production deployment | ✅ live on Vercel |
+\| Production deployment | ✅ deployed and verified |
 
 \| Final end-to-end QA | 🟡 pending verification |
 
@@ -793,22 +807,6 @@ occasion-generator/
 **---**
 
 
-
-**## 🚀 Production Deployment**
-
-**Production URL:** https://occasion-generator.vercel.app
-
-**Vercel Project:** https://vercel.com/ayu704sharma32-8523s-projects/occasion-generator
-
-**Deployment Status:** ✅ READY
-
-**Live Check:** ✅ HTTP 200
-
-**Deployment platform:** Vercel
-
-**Note:** The production deployment is live and responding successfully.
-
-**---**
 
 **## 🔗 Repository**
 
