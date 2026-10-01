@@ -1,0 +1,961 @@
+/* Deterministic decorative particles; no runtime randomization or layout shift. */
+
+.wl-landing .wl-particle-1 {
+  left: 40%;
+  top: 25%;
+  width: 4px;
+  height: 7px;
+  transform: rotate(47deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-1;
+  animation-duration: 6s;
+  animation-delay: -1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-1 {
+  0% {
+    transform: translateY(0) rotate(47deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(4px) rotate(59deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(8px) rotate(39deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-1 {
+    animation: none;
+    transform: rotate(47deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-2 {
+  left: 77%;
+  top: 48%;
+  width: 5px;
+  height: 8px;
+  transform: rotate(94deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-2;
+  animation-duration: 7s;
+  animation-delay: -2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-2 {
+  0% {
+    transform: translateY(0) rotate(94deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(5px) rotate(106deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(9px) rotate(86deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-2 {
+    animation: none;
+    transform: rotate(94deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-3 {
+  left: 20%;
+  top: 71%;
+  width: 3px;
+  height: 9px;
+  transform: rotate(141deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-3;
+  animation-duration: 8s;
+  animation-delay: -3s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-3 {
+  0% {
+    transform: translateY(0) rotate(141deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(6px) rotate(153deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(10px) rotate(133deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-3 {
+    animation: none;
+    transform: rotate(141deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-4 {
+  left: 57%;
+  top: 4%;
+  width: 4px;
+  height: 6px;
+  transform: rotate(188deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-4;
+  animation-duration: 9s;
+  animation-delay: -4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-4 {
+  0% {
+    transform: translateY(0) rotate(188deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(7px) rotate(200deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(11px) rotate(180deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-4 {
+    animation: none;
+    transform: rotate(188deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-5 {
+  left: 94%;
+  top: 27%;
+  width: 5px;
+  height: 7px;
+  transform: rotate(235deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-5;
+  animation-duration: 5s;
+  animation-delay: -5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-5 {
+  0% {
+    transform: translateY(0) rotate(235deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(3px) rotate(247deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(12px) rotate(227deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-5 {
+    animation: none;
+    transform: rotate(235deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-6 {
+  left: 37%;
+  top: 50%;
+  width: 3px;
+  height: 8px;
+  transform: rotate(282deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-6;
+  animation-duration: 6s;
+  animation-delay: -6s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-6 {
+  0% {
+    transform: translateY(0) rotate(282deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(4px) rotate(294deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(13px) rotate(274deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-6 {
+    animation: none;
+    transform: rotate(282deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-7 {
+  left: 74%;
+  top: 73%;
+  width: 4px;
+  height: 9px;
+  transform: rotate(329deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-7;
+  animation-duration: 7s;
+  animation-delay: -0s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-7 {
+  0% {
+    transform: translateY(0) rotate(329deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(5px) rotate(341deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(14px) rotate(321deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-7 {
+    animation: none;
+    transform: rotate(329deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-8 {
+  left: 17%;
+  top: 6%;
+  width: 5px;
+  height: 6px;
+  transform: rotate(16deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-8;
+  animation-duration: 8s;
+  animation-delay: -1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-8 {
+  0% {
+    transform: translateY(0) rotate(16deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(6px) rotate(28deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(7px) rotate(8deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-8 {
+    animation: none;
+    transform: rotate(16deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-9 {
+  left: 54%;
+  top: 29%;
+  width: 3px;
+  height: 7px;
+  transform: rotate(63deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-9;
+  animation-duration: 9s;
+  animation-delay: -2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-9 {
+  0% {
+    transform: translateY(0) rotate(63deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(7px) rotate(75deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(8px) rotate(55deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-9 {
+    animation: none;
+    transform: rotate(63deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-10 {
+  left: 91%;
+  top: 52%;
+  width: 4px;
+  height: 8px;
+  transform: rotate(110deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-10;
+  animation-duration: 5s;
+  animation-delay: -3s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-10 {
+  0% {
+    transform: translateY(0) rotate(110deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(3px) rotate(122deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(9px) rotate(102deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-10 {
+    animation: none;
+    transform: rotate(110deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-11 {
+  left: 34%;
+  top: 75%;
+  width: 5px;
+  height: 9px;
+  transform: rotate(157deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-11;
+  animation-duration: 6s;
+  animation-delay: -4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-11 {
+  0% {
+    transform: translateY(0) rotate(157deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(4px) rotate(169deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(10px) rotate(149deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-11 {
+    animation: none;
+    transform: rotate(157deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-12 {
+  left: 71%;
+  top: 8%;
+  width: 3px;
+  height: 6px;
+  transform: rotate(204deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-12;
+  animation-duration: 7s;
+  animation-delay: -5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-12 {
+  0% {
+    transform: translateY(0) rotate(204deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(5px) rotate(216deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(11px) rotate(196deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-12 {
+    animation: none;
+    transform: rotate(204deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-13 {
+  left: 14%;
+  top: 31%;
+  width: 4px;
+  height: 7px;
+  transform: rotate(251deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-13;
+  animation-duration: 8s;
+  animation-delay: -6s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-13 {
+  0% {
+    transform: translateY(0) rotate(251deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(6px) rotate(263deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(12px) rotate(243deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-13 {
+    animation: none;
+    transform: rotate(251deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-14 {
+  left: 51%;
+  top: 54%;
+  width: 5px;
+  height: 8px;
+  transform: rotate(298deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-14;
+  animation-duration: 9s;
+  animation-delay: -0s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-14 {
+  0% {
+    transform: translateY(0) rotate(298deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(7px) rotate(310deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(13px) rotate(290deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-14 {
+    animation: none;
+    transform: rotate(298deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-15 {
+  left: 88%;
+  top: 77%;
+  width: 3px;
+  height: 9px;
+  transform: rotate(345deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-15;
+  animation-duration: 5s;
+  animation-delay: -1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-15 {
+  0% {
+    transform: translateY(0) rotate(345deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(3px) rotate(357deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(14px) rotate(337deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-15 {
+    animation: none;
+    transform: rotate(345deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-16 {
+  left: 31%;
+  top: 10%;
+  width: 4px;
+  height: 6px;
+  transform: rotate(32deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-16;
+  animation-duration: 6s;
+  animation-delay: -2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-16 {
+  0% {
+    transform: translateY(0) rotate(32deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(4px) rotate(44deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(7px) rotate(24deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-16 {
+    animation: none;
+    transform: rotate(32deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-17 {
+  left: 68%;
+  top: 33%;
+  width: 5px;
+  height: 7px;
+  transform: rotate(79deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-17;
+  animation-duration: 7s;
+  animation-delay: -3s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-17 {
+  0% {
+    transform: translateY(0) rotate(79deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(5px) rotate(91deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(8px) rotate(71deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-17 {
+    animation: none;
+    transform: rotate(79deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-18 {
+  left: 11%;
+  top: 56%;
+  width: 3px;
+  height: 8px;
+  transform: rotate(126deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-18;
+  animation-duration: 8s;
+  animation-delay: -4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-18 {
+  0% {
+    transform: translateY(0) rotate(126deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(6px) rotate(138deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(9px) rotate(118deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-18 {
+    animation: none;
+    transform: rotate(126deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-19 {
+  left: 48%;
+  top: 79%;
+  width: 4px;
+  height: 9px;
+  transform: rotate(173deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-19;
+  animation-duration: 9s;
+  animation-delay: -5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-19 {
+  0% {
+    transform: translateY(0) rotate(173deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(7px) rotate(185deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(10px) rotate(165deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-19 {
+    animation: none;
+    transform: rotate(173deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-20 {
+  left: 85%;
+  top: 12%;
+  width: 5px;
+  height: 6px;
+  transform: rotate(220deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-20;
+  animation-duration: 5s;
+  animation-delay: -6s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-20 {
+  0% {
+    transform: translateY(0) rotate(220deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(3px) rotate(232deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(11px) rotate(212deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-20 {
+    animation: none;
+    transform: rotate(220deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-21 {
+  left: 28%;
+  top: 35%;
+  width: 3px;
+  height: 7px;
+  transform: rotate(267deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-21;
+  animation-duration: 6s;
+  animation-delay: -0s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-21 {
+  0% {
+    transform: translateY(0) rotate(267deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(4px) rotate(279deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(12px) rotate(259deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-21 {
+    animation: none;
+    transform: rotate(267deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-22 {
+  left: 65%;
+  top: 58%;
+  width: 4px;
+  height: 8px;
+  transform: rotate(314deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-22;
+  animation-duration: 7s;
+  animation-delay: -1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-22 {
+  0% {
+    transform: translateY(0) rotate(314deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(5px) rotate(326deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(13px) rotate(306deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-22 {
+    animation: none;
+    transform: rotate(314deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-23 {
+  left: 8%;
+  top: 81%;
+  width: 5px;
+  height: 9px;
+  transform: rotate(1deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-23;
+  animation-duration: 8s;
+  animation-delay: -2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-23 {
+  0% {
+    transform: translateY(0) rotate(1deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(6px) rotate(13deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(14px) rotate(-7deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-23 {
+    animation: none;
+    transform: rotate(1deg);
+    opacity: .35;
+  }
+}
+
+.wl-landing .wl-particle-24 {
+  left: 45%;
+  top: 14%;
+  width: 3px;
+  height: 6px;
+  transform: rotate(48deg);
+  transform-origin: center;
+  animation-name: wl-confetti-drift-24;
+  animation-duration: 9s;
+  animation-delay: -3s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  pointer-events: none;
+  contain: layout style;
+}
+
+@keyframes wl-confetti-drift-24 {
+  0% {
+    transform: translateY(0) rotate(48deg);
+    opacity: .25;
+  }
+  50% {
+    transform: translateY(7px) rotate(60deg);
+    opacity: .5;
+  }
+  100% {
+    transform: translateY(7px) rotate(40deg);
+    opacity: .3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-landing .wl-particle-24 {
+    animation: none;
+    transform: rotate(48deg);
+    opacity: .35;
+  }
+}

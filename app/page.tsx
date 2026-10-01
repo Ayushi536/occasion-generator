@@ -1,597 +1,737 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import { useState } from "react";
+import Link from "next/link";
 import {
-  Sparkles,
   ArrowRight,
+  ArrowUpRight,
+  Sparkles,
   Heart,
-  Cake,
-  Play,
-  Share2,
-  Lock,
-  Volume2,
-  Calendar,
   Gift,
-  Eye,
-  CheckCircle2,
-  Wand2,
-  RotateCw,
-  Flame,
-  Award,
-  Layers,
-  Film,
+  Play,
+  Check,
+  Music2,
+  Image as ImageIcon,
   MessageCircle,
-} from 'lucide-react';
-import confetti from 'canvas-confetti';
-import { motion, AnimatePresence } from 'motion/react';
+  WandSparkles,
+  Menu,
+  X,
+  ChevronDown,
+  Copy,
+  LoaderCircle,
+} from "lucide-react";
+import confetti from "canvas-confetti";
+import "@/styles/landing.css";
+import "@/styles/landing-themes.css";
+import "@/styles/landing-ornaments.css";
+
+const themes = [
+  {
+    id: "coral",
+    name: "Birthday confetti",
+    occasion: "Birthday",
+    symbol: "✷",
+    description: "A little joy. A lot of you.",
+  },
+  {
+    id: "rose",
+    name: "Love letters",
+    occasion: "Anniversary",
+    symbol: "♡",
+    description: "For your favorite forever.",
+  },
+  {
+    id: "sage",
+    name: "The next chapter",
+    occasion: "Milestone",
+    symbol: "✦",
+    description: "Big dreams deserve a big moment.",
+  },
+  {
+    id: "lavender",
+    name: "Pastel daydream",
+    occasion: "Birthday",
+    symbol: "❋",
+    description: "Soft colors, sweetest memories.",
+  },
+  {
+    id: "gold",
+    name: "Golden hour",
+    occasion: "Anniversary",
+    symbol: "☀",
+    description: "A love that only gets brighter.",
+  },
+  {
+    id: "midnight",
+    name: "Written in the stars",
+    occasion: "Milestone",
+    symbol: "☾",
+    description: "Your moment to shine.",
+  },
+];
+const faqs = [
+  [
+    "How does Wishly work?",
+    "Choose a theme, add your message and favorite memories, then publish a celebration page. Share its unique link with someone special.",
+  ],
+  [
+    "Can I add my own photos and music?",
+    "Yes. The creator flow lets you add photos, video, a memory timeline, and an audio track to make the page feel personal.",
+  ],
+  [
+    "Can friends leave their own wishes?",
+    "Yes! Your published page includes a wishes wall where guests can add messages, plus an interactive candle celebration.",
+  ],
+  [
+    "Can I edit my page after creating it?",
+    "You can open your page from the dashboard and edit its message, memories, and theme whenever you need to.",
+  ],
+];
 
 export default function HomePage() {
-  const [unboxed, setUnboxed] = useState(false);
-  const [heroTemplate, setHeroTemplate] = useState<'neon' | 'pastel' | 'royal'>('neon');
-
-  // Interactive Live AI Wish Generator Lab State
-  const [aiName, setAiName] = useState('Ananya');
-  const [aiOccasion, setAiOccasion] = useState('birthday');
-  const [aiTone, setAiTone] = useState<'emotional' | 'funny' | 'poetic'>('emotional');
-  const [aiLang, setAiLang] = useState<'en' | 'hi' | 'hinglish'>('hinglish');
-  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
-  const [generatedWish, setGeneratedWish] = useState<string>(
-    'Happy 25th Birthday to my favorite human in the whole universe! From late-night chai gossip to celebrating every win together, you have always been the spark that lights up the room. Tumhari positivity is truly one in a billion. Keep shining bright! ✨'
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState("coral");
+  const [revealed, setRevealed] = useState(false);
+  const [filter, setFilter] = useState("All moments");
+  const [name, setName] = useState("Ananya");
+  const [occasion, setOccasion] = useState("birthday");
+  const [tone, setTone] = useState("emotional");
+  const [wish, setWish] = useState(
+    "Here’s to your little joys, your big dreams, and all the beautiful moments still to come. The world is a warmer place with you in it. Happy birthday, Ananya!",
   );
-  const [generatedHeadline, setGeneratedHeadline] = useState<string>('Happy 25th Birthday, Ananya!');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const playChimeSound = () => {
-    try {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (AudioContextClass) {
-        const ctx = new AudioContextClass();
-        const now = ctx.currentTime;
-        const freqs = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
-        freqs.forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-          gain.gain.setValueAtTime(0.18, now + idx * 0.08);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 1.2);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(now + idx * 0.08);
-          osc.stop(now + idx * 0.08 + 1.2);
-        });
-      }
-    } catch {
-      // AudioContext unavailable
-    }
-  };
-
-  const handleCelebrateDemo = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    playChimeSound();
+  function celebrate() {
+    setRevealed(true);
     confetti({
-      particleCount: 90,
-      spread: 75,
-      origin: { y: 0.65 },
-      colors: heroTemplate === 'pastel'
-        ? ['#f472b6', '#c084fc', '#fbcfe8', '#fef08a']
-        : heroTemplate === 'royal'
-        ? ['#d4af37', '#fef08a', '#f59e0b', '#ffffff']
-        : ['#06b6d4', '#ec4899', '#f59e0b', '#3b82f6'],
+      particleCount: 110,
+      spread: 80,
+      origin: { y: 0.55 },
+      colors: ["#ef745e", "#e9c966", "#91ad91", "#baa6d4"],
+      disableForReducedMotion: true,
     });
-  };
+  }
 
-  const handleToggleUnbox = () => {
-    if (!unboxed) {
-      handleCelebrateDemo();
-    }
-    setUnboxed(!unboxed);
-  };
-
-  const handleGenerateAiWishDemo = async () => {
-    setIsGeneratingAi(true);
+  async function generateWish() {
+    setLoading(true);
+    setError("");
+    setCopied(false);
     try {
-      const res = await fetch('/api/ai/wish', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/ai/wish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          recipientName: aiName.trim() || 'Loved One',
-          occasion: aiOccasion,
-          relationship: 'Best Friend',
-          tone: aiTone,
-          language: aiLang,
-          mode: 'full_letter',
+          recipientName: name.trim() || "someone special",
+          occasion,
+          tone,
+          language: "en",
+          mode: "full_letter",
+          relationship: "Friend",
         }),
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.headline) setGeneratedHeadline(data.headline);
-        if (data.paragraphs && data.paragraphs.length > 0) {
-          setGeneratedWish(data.paragraphs.join('\n\n'));
-        }
-        playChimeSound();
-        confetti({
-          particleCount: 40,
-          spread: 50,
-          origin: { y: 0.7 },
-        });
-      }
+      if (!response.ok)
+        throw new Error("Could not create a wish. Please try again.");
+      const data = await response.json();
+      if (!Array.isArray(data.paragraphs) || !data.paragraphs.length)
+        throw new Error("No wish returned. Please try again.");
+      setWish(data.paragraphs.join("\n\n"));
     } catch (err) {
-      console.error(err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.",
+      );
     } finally {
-      setIsGeneratingAi(false);
+      setLoading(false);
     }
-  };
+  }
+
+  async function copyWish() {
+    try {
+      await navigator.clipboard.writeText(wish);
+      setCopied(true);
+    } catch {
+      setError(
+        "Copy is unavailable in this browser. You can select and copy the message below.",
+      );
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-[#07080c] text-slate-100 flex flex-col selection:bg-amber-400 selection:text-slate-950 overflow-x-hidden">
-      <Navbar />
-
-      {/* Hero Section */}
-      <section className="relative min-h-[92vh] flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8 pt-12 pb-24 overflow-hidden">
-        {/* Dynamic atmospheric backdrop responding to template selection */}
-        <div
-          className={`absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[420px] blur-[140px] pointer-events-none rounded-full transition-all duration-1000 ${
-            heroTemplate === 'neon'
-              ? 'bg-gradient-to-r from-cyan-500/20 via-fuchsia-500/15 to-blue-500/20'
-              : heroTemplate === 'pastel'
-              ? 'bg-gradient-to-r from-pink-500/20 via-purple-500/15 to-rose-400/20'
-              : 'bg-gradient-to-r from-amber-500/25 via-yellow-600/15 to-amber-700/20'
-          }`}
-        />
-
-        {/* Floating Ambient Stars / Embers */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-12 left-10 w-2 h-2 rounded-full bg-amber-400/60 animate-ping" />
-          <div className="absolute top-36 right-16 w-3 h-3 rounded-full bg-cyan-400/40 animate-pulse" />
-          <div className="absolute bottom-28 left-1/4 w-2 h-2 rounded-full bg-pink-400/50 animate-bounce" />
-          <div className="absolute top-1/3 right-1/4 w-1.5 h-1.5 rounded-full bg-yellow-300/70 animate-ping" />
+    <div className="wl-landing">
+      <a className="wl-skip" href="#main">
+        Skip to content
+      </a>
+      <header className="wl-header">
+        <Link href="/" className="wl-logo" aria-label="Wishly home">
+          <span>✳</span> wishly<span className="wl-logo-dot">.</span>
+        </Link>
+        <nav
+          className={`wl-nav ${menuOpen ? "wl-nav-open" : ""}`}
+          aria-label="Main navigation"
+        >
+          <a href="#how-it-works" onClick={() => setMenuOpen(false)}>
+            How it works
+          </a>
+          <a href="#templates" onClick={() => setMenuOpen(false)}>
+            Explore themes
+          </a>
+          <a href="#wish-lab" onClick={() => setMenuOpen(false)}>
+            A little AI magic <Sparkles size={13} />
+          </a>
+        </nav>
+        <div className="wl-header-actions">
+          <Link className="wl-signin" href="/login">
+            Log in
+          </Link>
+          <Link className="wl-button wl-button-small" href="/create">
+            Make a wish <ArrowUpRight size={16} />
+          </Link>
+          <button
+            className="wl-menu"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? <X /> : <Menu />}
+          </button>
         </div>
+      </header>
 
-        <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
-          {/* Natural kicker badges */}
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400 mb-6">
-            <span className="flex items-center gap-1.5 text-amber-400">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Cinematic Occasion Pages</span>
-            </span>
-            <span aria-hidden="true">·</span>
-            <span>Gemini AI Heartfelt Letters</span>
-            <span aria-hidden="true">·</span>
-            <span className="text-cyan-400">3D Interactive Stories</span>
-          </div>
-
-          {/* Marquee Headline */}
-          <h1
-            className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white leading-tight max-w-3xl mb-6 font-syne"
-            style={{ textWrap: 'balance' }}
-          >
-            Turn Simple Wishes Into{' '}
-            <span
-              className={`transition-colors duration-500 ${
-                heroTemplate === 'neon'
-                  ? 'bg-gradient-to-r from-cyan-400 via-pink-400 to-amber-400 bg-clip-text text-transparent'
-                  : heroTemplate === 'pastel'
-                  ? 'bg-gradient-to-r from-pink-300 via-purple-300 to-rose-300 bg-clip-text text-transparent'
-                  : 'gold-gradient-text'
-              }`}
-            >
-              Cinematic Stories
-            </span>
-          </h1>
-
-          <p
-            className="text-base sm:text-xl text-slate-300 max-w-2xl font-light mb-8 leading-relaxed"
-            style={{ textWrap: 'balance' }}
-          >
-            A bespoke, interactive celebration website with personalized heartfelt letters, 3D memory Polaroids, ambient music, virtual candle blowouts, and a luxury printable QR gift tag.
-          </p>
-
-          {/* Action Decision Block */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-10">
-            <Link
-              href="/create"
-              className="w-full sm:w-auto py-4 px-8 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-extrabold text-sm flex items-center justify-center gap-2 transition cursor-pointer shadow-xl shadow-amber-500/25"
-            >
-              <Sparkles className="h-4 w-4" />
-              <span>Create Free Wish Page</span>
-            </Link>
-
-            <Link
-              href="/w/priya-25th-birthday"
-              className="w-full sm:w-auto py-4 px-8 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 text-white font-semibold text-sm flex items-center justify-center gap-2 transition cursor-pointer backdrop-blur-md"
-            >
-              <Play className="h-4 w-4 text-amber-400 fill-amber-400" />
-              <span>Experience Live Demo</span>
-            </Link>
-          </div>
-
-          {/* Template Mood Switcher Preview Bar */}
-          <div className="flex items-center gap-2 mb-6 p-1.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
-            <span className="text-[11px] font-mono text-slate-400 px-2">Preview Theme:</span>
-            <button
-              onClick={() => setHeroTemplate('neon')}
-              className={`px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer ${
-                heroTemplate === 'neon' ? 'bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              ⚡ Neon Night
-            </button>
-            <button
-              onClick={() => setHeroTemplate('pastel')}
-              className={`px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer ${
-                heroTemplate === 'pastel' ? 'bg-pink-400 text-slate-950 shadow-md shadow-pink-500/20' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              🌸 Pastel Dream
-            </button>
-            <button
-              onClick={() => setHeroTemplate('royal')}
-              className={`px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer ${
-                heroTemplate === 'royal' ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-500/20' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              👑 Royal Gold
-            </button>
-          </div>
-
-          {/* Interactive Hero Unbox Simulator Widget */}
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            onClick={handleToggleUnbox}
-            className={`w-full max-w-md rounded-3xl border-2 p-6 backdrop-blur-xl shadow-2xl cursor-pointer relative group overflow-hidden select-none transition-all duration-500 ${
-              heroTemplate === 'neon'
-                ? 'border-cyan-400/50 bg-slate-900/90 shadow-cyan-500/10'
-                : heroTemplate === 'pastel'
-                ? 'border-pink-400/50 bg-[#161220]/90 shadow-pink-500/10'
-                : 'border-amber-400/50 bg-slate-950/90 shadow-amber-500/15'
-            }`}
-          >
-            {/* Ambient Shimmer */}
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-400/5 via-pink-400/5 to-cyan-400/5 opacity-50 group-hover:opacity-100 transition" />
-
-            <div className="flex items-center justify-between mb-3 text-xs">
-              <span className="font-mono text-amber-300 flex items-center gap-1.5 font-bold">
-                <Gift className="h-4 w-4" />
-                <span>Tap To {unboxed ? 'Close' : 'Unbox Live'} Preview</span>
+      <main id="main">
+        <section className="wl-hero wl-container">
+          <div className="wl-hero-copy">
+            <div className="wl-eyebrow">
+              <span className="wl-status-dot" /> MADE FOR YOUR FAVORITE PEOPLE
+            </div>
+            <h1>
+              Some moments
+              <br />
+              deserve more
+              <br />
+              than a <em>message.</em>
+              <span className="wl-heading-spark" aria-hidden="true">
+                ✳
               </span>
-              <span className="text-[10px] text-slate-400 font-mono">Interactive Simulator</span>
-            </div>
-
-            <AnimatePresence mode="wait">
-              {!unboxed ? (
-                <motion.div
-                  key="sealed"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.05 }}
-                  className="py-6 flex flex-col items-center justify-center"
-                >
-                  <div className="h-16 w-16 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center text-slate-950 shadow-lg shadow-amber-500/30 mb-3 animate-pulse">
-                    <Sparkles className="h-8 w-8" />
-                  </div>
-                  <span className="text-sm font-bold text-white font-syne">Sealed Surprise For Priya</span>
-                  <span className="text-xs text-slate-400 mt-1">Tap anywhere to break wax seal & unlock</span>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="opened"
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  className="py-4 text-left space-y-3"
-                >
-                  <div className="flex items-center justify-between text-xs text-amber-400 font-bold">
-                    <span>🎉 25th Birthday Celebration</span>
-                    <span className="text-[10px] text-slate-400">60 FPS Cinematic Story</span>
-                  </div>
-                  <p className="text-xs text-slate-200 italic leading-relaxed">
-                    &ldquo;To the girl who turns ordinary days into electric midnight memories... May your 25th chapter be filled with audacious dreams and endless joy!&rdquo;
-                  </p>
-                  <div className="flex items-center justify-between pt-2 border-t border-white/10 text-[11px] text-slate-400">
-                    <span className="text-emerald-400 font-medium">✨ Chimes & Audio Unlocked</span>
-                    <span className="text-amber-400 font-bold">Tap to seal</span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-
-          {/* Adjacency proof signals */}
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400">
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-              <span>Gemini AI Heartfelt Writing</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-              <span>3D Flippable Memory Polaroids</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-              <span>Luxury Printable Keepsake QR Tag</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* LIVE AI WISH WRITER LABORATORY (Interactive Demo Section) */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
-        <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-b from-slate-900/90 to-slate-950/90 p-8 sm:p-12 backdrop-blur-2xl shadow-2xl relative overflow-hidden">
-          {/* Top ambient glow */}
-          <div className="absolute top-0 right-1/4 w-80 h-32 bg-amber-400/10 blur-3xl pointer-events-none" />
-
-          <div className="text-center max-w-xl mx-auto mb-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-300 text-xs font-semibold mb-3">
-              <Wand2 className="h-3.5 w-3.5" />
-              <span>Try The AI Wishing Assistant Live</span>
-            </div>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white font-syne">
-              Craft Heartfelt Wishes in Seconds
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-400 mt-2">
-              Never get writer&apos;s block again. Watch Gemini craft deep, tear-jerking, or hilarious wishes in English, Hindi, or Hinglish.
+            </h1>
+            <p>
+              Turn your wishes, memories, and little inside jokes into a
+              beautiful celebration page. A gift that feels like <em>you.</em>
             </p>
-          </div>
-
-          {/* Interactive controls */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-            {/* Input Parameters (5 cols) */}
-            <div className="md:col-span-5 space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Recipient Name
-                </label>
-                <input
-                  type="text"
-                  value={aiName}
-                  onChange={(e) => setAiName(e.target.value)}
-                  placeholder="e.g. Aryan, Priya, Dad"
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Occasion
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: 'birthday', label: '🎂 Birthday' },
-                    { id: 'anniversary', label: '💖 Anniversary' },
-                    { id: 'milestone', label: '🌟 Milestone' },
-                  ].map((occ) => (
-                    <button
-                      key={occ.id}
-                      type="button"
-                      onClick={() => setAiOccasion(occ.id)}
-                      className={`py-2 px-2 rounded-xl text-[11px] font-semibold transition cursor-pointer border ${
-                        aiOccasion === occ.id
-                          ? 'bg-amber-400/20 border-amber-400 text-amber-300'
-                          : 'border-white/10 bg-white/5 text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {occ.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Tone
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: 'emotional', label: '🥺 Emotional' },
-                    { id: 'funny', label: '😂 Playful' },
-                    { id: 'poetic', label: '✍️ Poetic' },
-                  ].map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      onClick={() => setAiTone(t.id as 'emotional' | 'funny' | 'poetic')}
-                      className={`py-2 px-2 rounded-xl text-[11px] font-semibold transition cursor-pointer border ${
-                        aiTone === t.id
-                          ? 'bg-amber-400/20 border-amber-400 text-amber-300'
-                          : 'border-white/10 bg-white/5 text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Language Style
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: 'hinglish', label: 'Hinglish' },
-                    { id: 'hi', label: 'हिंदी (Devanagari)' },
-                    { id: 'en', label: 'English' },
-                  ].map((l) => (
-                    <button
-                      key={l.id}
-                      type="button"
-                      onClick={() => setAiLang(l.id as 'en' | 'hi' | 'hinglish')}
-                      className={`py-2 px-2 rounded-xl text-[11px] font-semibold transition cursor-pointer border ${
-                        aiLang === l.id
-                          ? 'bg-amber-400/20 border-amber-400 text-amber-300'
-                          : 'border-white/10 bg-white/5 text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {l.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleGenerateAiWishDemo}
-                disabled={isGeneratingAi}
-                className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer shadow-lg shadow-amber-500/20 disabled:opacity-50"
-              >
-                <Wand2 className="h-4 w-4" />
-                <span>{isGeneratingAi ? 'Gemini AI is Writing...' : '✨ Generate AI Wish Live'}</span>
+            <div className="wl-hero-actions">
+              <Link href="/create" className="wl-button">
+                Create a celebration <ArrowUpRight size={19} />
+              </Link>
+              <button className="wl-text-button" onClick={celebrate}>
+                <span className="wl-play">
+                  <Play size={12} fill="currentColor" />
+                </span>{" "}
+                See the magic
               </button>
             </div>
-
-            {/* Generated Output Stage (7 cols) */}
-            <div className="md:col-span-7 p-6 rounded-2xl bg-black/50 border border-white/10 relative flex flex-col justify-between min-h-[300px]">
+            <div className="wl-hero-note">
+              <Check size={14} /> Personalize it. Share it. Make their day.
+            </div>
+            <div className="wl-small-love">
+              <div className="wl-avatars" aria-hidden="true">
+                <span>A</span>
+                <span>S</span>
+                <span>M</span>
+                <span>R</span>
+              </div>
               <div>
-                <div className="flex items-center justify-between text-xs text-amber-400 font-mono mb-3 border-b border-white/10 pb-2">
-                  <span className="flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                    <span>AI Story Preview</span>
-                  </span>
-                  <span className="text-[10px] text-slate-400 uppercase">{aiLang} · {aiTone}</span>
+                <span className="wl-star-rating" aria-label="Made with love">
+                  ♥ ♥ ♥ ♥ ♥
+                </span>
+                <p>Little pages. Really big feelings.</p>
+              </div>
+            </div>
+          </div>
+          <div className="wl-hero-art" data-theme={selectedTheme}>
+            <span className="wl-orbit wl-orbit-one" aria-hidden="true" />
+            <span className="wl-orbit wl-orbit-two" aria-hidden="true" />
+            <span className="wl-floating-star" aria-hidden="true">
+              ✧
+            </span>
+            <span className="wl-floating-flower" aria-hidden="true">
+              ✳
+            </span>
+            <div className="wl-memory-note">
+              <Heart size={14} fill="currentColor" /> A whole page, just for
+              you.
+            </div>
+            <article
+              className={`wl-celebration-card ${revealed ? "wl-revealed" : ""}`}
+            >
+              <div className="wl-card-toolbar">
+                <span>
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span>wishly / a-little-surprise</span>
+                <Heart size={12} />
+              </div>
+              <div className="wl-card-content">
+                <span className="wl-card-kicker">TODAY IS ALL ABOUT YOU</span>
+                <div className="wl-cake" aria-hidden="true">
+                  <div className="wl-candle">
+                    <span />
+                  </div>
+                  <div className="wl-cake-top" />
+                  <div className="wl-cake-body">
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                  </div>
+                  <div className="wl-cake-base" />
                 </div>
-
-                <h3 className="text-base font-bold text-white mb-3 font-serif">
-                  {generatedHeadline}
-                </h3>
-
-                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-line italic">
-                  &ldquo;{generatedWish}&rdquo;
+                <h2>
+                  {revealed ? "Make a wish," : "Happy birthday,"}
+                  <em>Ananya.</em>
+                </h2>
+                <p>
+                  {revealed
+                    ? "Here’s to the memories we’ve made, and all the magic still ahead. You are so loved. ♡"
+                    : "The world got a little brighter the day you arrived. Here’s a little reminder."}
                 </p>
+                <button className="wl-card-button" onClick={celebrate}>
+                  {revealed ? "Celebrate again" : "Open your surprise"}{" "}
+                  <Gift size={15} />
+                </button>
+                <span className="wl-card-signature">
+                  made with love, just for you ♡
+                </span>
               </div>
-
-              <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between">
-                <span className="text-[11px] text-slate-400">Ready to personalize for your loved one?</span>
-                <Link
-                  href="/create"
-                  className="py-1.5 px-3 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs flex items-center gap-1 transition"
+              <div className="wl-confetti" aria-hidden="true">
+                {Array.from({ length: 24 }, (_, i) => (
+                  <i key={i} className={`wl-particle wl-particle-${i + 1}`} />
+                ))}
+              </div>
+            </article>
+            <div className="wl-polaroid">
+              <div className="wl-sunset" aria-hidden="true">
+                <span>☀</span>
+                <i />
+                <b />
+              </div>
+              <p>our kind of happy ♡</p>
+            </div>
+            <div className="wl-music">
+              <span className="wl-music-icon">
+                <Music2 size={17} />
+              </span>
+              <div>
+                <strong>Your favorite song</strong>
+                <span>A soundtrack to your story</span>
+              </div>
+              <div className="wl-music-bars" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+                <i />
+              </div>
+            </div>
+            <div className="wl-theme-picker" aria-label="Preview color theme">
+              {themes.slice(0, 4).map((theme) => (
+                <button
+                  key={theme.id}
+                  data-theme={theme.id}
+                  aria-label={`Preview ${theme.name}`}
+                  aria-pressed={selectedTheme === theme.id}
+                  className={selectedTheme === theme.id ? "is-selected" : ""}
+                  onClick={() => setSelectedTheme(theme.id)}
                 >
-                  <span>Use In My Page</span>
-                  <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
+                  {selectedTheme === theme.id && <Check size={13} />}
+                </button>
+              ))}
+              <span>Pick a little mood</span>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 3 Distinct Templates Showcase */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full border-t border-white/10">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-amber-400 mb-2">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Theme Aesthetics</span>
+        <div className="wl-occasion-strip" aria-label="Occasions">
+          <span>BIRTHDAYS</span>
+          <i>✳</i>
+          <span>ANNIVERSARIES</span>
+          <i>✳</i>
+          <span>BIG LITTLE MILESTONES</span>
+          <i>✳</i>
+          <span>JUST BECAUSE</span>
+          <i>✳</i>
+          <span>YOUR KIND OF LOVE</span>
+        </div>
+
+        <section id="how-it-works" className="wl-section wl-container">
+          <div className="wl-section-heading">
+            <div>
+              <span className="wl-eyebrow">
+                A LITTLE EFFORT. A LOT OF HEART.
+              </span>
+              <h2>
+                From a thought to
+                <br />
+                their <em>favorite surprise.</em>
+              </h2>
+            </div>
+            <p>
+              No design skills needed.
+              <br />
+              Just a person you want to make smile.
+            </p>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white font-syne">
-            Three Distinct Visual Universes
+          <div className="wl-steps">
+            {[
+              {
+                number: "01",
+                icon: Sparkles,
+                title: "Find their kind of magic",
+                text: "Choose a theme that feels like them. Soft and dreamy, bold and bright, or a little golden.",
+              },
+              {
+                number: "02",
+                icon: ImageIcon,
+                title: "Fill it with your story",
+                text: "Add your favorite photos, a heartfelt letter, and the song that takes you right back.",
+              },
+              {
+                number: "03",
+                icon: Gift,
+                title: "Send a little happiness",
+                text: "Share a single link. Let them unwrap a whole world of memories made just for them.",
+              },
+            ].map((step) => (
+              <article className="wl-step" key={step.number}>
+                <div className="wl-step-top">
+                  <span>{step.number}</span>
+                  <step.icon size={23} strokeWidth={1.4} />
+                </div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="templates" className="wl-templates wl-section">
+          <div className="wl-container">
+            <div className="wl-section-heading">
+              <div>
+                <span className="wl-eyebrow">A MOOD FOR EVERY MOMENT</span>
+                <h2>
+                  Beautiful beginnings.
+                  <br />
+                  <em>Uniquely yours.</em>
+                </h2>
+              </div>
+              <Link className="wl-text-link" href="/templates">
+                Visit the template gallery <ArrowUpRight size={17} />
+              </Link>
+            </div>
+            <div className="wl-filters" aria-label="Filter theme inspiration">
+              {["All moments", "Birthday", "Anniversary", "Milestone"].map(
+                (item) => (
+                  <button
+                    key={item}
+                    aria-pressed={filter === item}
+                    className={filter === item ? "is-active" : ""}
+                    onClick={() => setFilter(item)}
+                  >
+                    {item}
+                  </button>
+                ),
+              )}
+            </div>
+            <div className="wl-theme-grid">
+              {themes
+                .filter(
+                  (theme) =>
+                    filter === "All moments" || theme.occasion === filter,
+                )
+                .map((theme) => (
+                  <Link
+                    href="/templates"
+                    className="wl-theme-card"
+                    data-theme={theme.id}
+                    key={theme.id}
+                  >
+                    <div className="wl-theme-art">
+                      <span className="wl-theme-occasion">
+                        {theme.occasion}
+                      </span>
+                      <span className="wl-theme-symbol" aria-hidden="true">
+                        {theme.symbol}
+                      </span>
+                      <span className="wl-theme-art-title">
+                        {theme.id === "rose" || theme.id === "gold"
+                          ? "Always, you."
+                          : theme.id === "sage" || theme.id === "midnight"
+                            ? "Here’s to you."
+                            : "Oh, happy day."}
+                      </span>
+                      <span className="wl-theme-art-caption">
+                        a moment worth remembering
+                      </span>
+                      <span className="wl-theme-arrow">
+                        <ArrowUpRight size={19} />
+                      </span>
+                    </div>
+                    <div className="wl-theme-caption">
+                      <h3>{theme.name}</h3>
+                      <p>{theme.description}</p>
+                    </div>
+                  </Link>
+                ))}
+            </div>
+            <p className="wl-gallery-note">
+              A little inspiration for your page. Explore available templates in
+              the gallery.
+            </p>
+          </div>
+        </section>
+
+        <section className="wl-section wl-container wl-features">
+          <div className="wl-letter-art">
+            <span className="wl-tape" />
+            <span className="wl-eyebrow">A NOTE FROM THE HEART</span>
+            <h3>Hey, favorite human.</h3>
+            <p>
+              Remember that evening we watched the sky turn pink and forgot what
+              time it was?
+            </p>
+            <p>
+              Here’s to a hundred more of those moments. And to you, for making
+              the ordinary feel extraordinary.
+            </p>
+            <span className="wl-letter-signature">
+              Always in your corner, ♡
+            </span>
+            <span className="wl-letter-flower" aria-hidden="true">
+              ❋
+            </span>
+          </div>
+          <div className="wl-features-copy">
+            <span className="wl-eyebrow">IT’S THE LITTLE THINGS</span>
+            <h2>
+              More than a page.
+              <br />
+              <em>A feeling.</em>
+            </h2>
+            <p>
+              A tiny corner of the internet, filled with everything that makes
+              your person feel seen.
+            </p>
+            <ul>
+              {[
+                {
+                  icon: Heart,
+                  title: "Words that sound like you",
+                  text: "Your own letter, with a little help when words are hard.",
+                },
+                {
+                  icon: ImageIcon,
+                  title: "Memories with a home",
+                  text: "Photos, videos, and a timeline of your favorite moments.",
+                },
+                {
+                  icon: MessageCircle,
+                  title: "Everyone’s love, in one place",
+                  text: "A wishes wall for friends and family to join the celebration.",
+                },
+                {
+                  icon: Music2,
+                  title: "A little extra magic",
+                  text: "Music, virtual candles, and surprises to make it feel alive.",
+                },
+              ].map((feature) => (
+                <li key={feature.title}>
+                  <span>
+                    <feature.icon size={20} strokeWidth={1.5} />
+                  </span>
+                  <div>
+                    <h3>{feature.title}</h3>
+                    <p>{feature.text}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section id="wish-lab" className="wl-lab wl-section">
+          <div className="wl-container wl-lab-grid">
+            <div>
+              <span className="wl-eyebrow">
+                <Sparkles size={14} /> WHEN WORDS NEED A LITTLE NUDGE
+              </span>
+              <h2>
+                Big feelings.
+                <br />
+                <em>Found words.</em>
+              </h2>
+              <p>
+                Tell us who you’re celebrating. Let our wish assistant help you
+                get started, then make every word your own.
+              </p>
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void generateWish();
+                }}
+              >
+                <label htmlFor="recipient">
+                  Their name
+                  <input
+                    id="recipient"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    maxLength={80}
+                    placeholder="Someone special"
+                  />
+                </label>
+                <div className="wl-form-row">
+                  <label htmlFor="occasion">
+                    The occasion
+                    <select
+                      id="occasion"
+                      value={occasion}
+                      onChange={(event) => setOccasion(event.target.value)}
+                    >
+                      <option value="birthday">Birthday</option>
+                      <option value="anniversary">Anniversary</option>
+                      <option value="graduation">Graduation</option>
+                      <option value="milestone">Milestone</option>
+                    </select>
+                  </label>
+                  <label htmlFor="tone">
+                    The feeling
+                    <select
+                      id="tone"
+                      value={tone}
+                      onChange={(event) => setTone(event.target.value)}
+                    >
+                      <option value="emotional">Heartfelt</option>
+                      <option value="funny">Playful</option>
+                      <option value="poetic">Poetic</option>
+                    </select>
+                  </label>
+                </div>
+                <button className="wl-button" disabled={loading} type="submit">
+                  {loading ? (
+                    <LoaderCircle className="wl-spinner" size={17} />
+                  ) : (
+                    <WandSparkles size={17} />
+                  )}
+                  {loading ? "Finding the words…" : "Write a little magic"}
+                </button>
+                {error && (
+                  <p className="wl-error" role="alert">
+                    {error}
+                  </p>
+                )}
+              </form>
+            </div>
+            <div className="wl-wish-output" aria-busy={loading}>
+              <div className="wl-output-top">
+                <span>
+                  <Heart size={14} /> YOUR LITTLE LOVE NOTE
+                </span>
+                <button
+                  aria-label={copied ? "Wish copied" : "Copy wish"}
+                  onClick={copyWish}
+                >
+                  {copied ? <Check size={17} /> : <Copy size={17} />}
+                </button>
+              </div>
+              <span className="wl-output-quote" aria-hidden="true">
+                “
+              </span>
+              <p aria-live="polite">{wish}</p>
+              <span className="wl-output-foot">
+                A starting point for something personal. ♡
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <section className="wl-section wl-container wl-faq">
+          <div>
+            <span className="wl-eyebrow">A FEW LITTLE ANSWERS</span>
+            <h2>
+              Curious?
+              <br />
+              <em>We thought so.</em>
+            </h2>
+            <p>Everything you need to get your celebration started.</p>
+          </div>
+          <div>
+            {faqs.map(([question, answer], index) => (
+              <div className="wl-faq-item" key={question}>
+                <h3>
+                  <button
+                    aria-expanded={openFaq === index}
+                    aria-controls={`faq-${index}`}
+                    onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                  >
+                    {question}
+                    <ChevronDown
+                      size={18}
+                      className={openFaq === index ? "is-open" : ""}
+                    />
+                  </button>
+                </h3>
+                <div id={`faq-${index}`} hidden={openFaq !== index}>
+                  <p>{answer}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="wl-final-cta">
+          <span className="wl-cta-star" aria-hidden="true">
+            ✳
+          </span>
+          <span className="wl-eyebrow">
+            SOMEONE’S DAY IS ABOUT TO GET BETTER
+          </span>
+          <h2>
+            Make a little page.
+            <br />
+            <em>Leave a big smile.</em>
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-2 max-w-md mx-auto">
-            Choose the mood that best honors your recipient&apos;s personality.
-          </p>
-        </div>
-
-        {/* Template Showcase Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* 1. Neon Night */}
-          <div className="rounded-3xl border border-cyan-500/30 bg-slate-900/50 p-6 backdrop-blur-xl flex flex-col justify-between hover:border-cyan-400 transition-all shadow-[0_0_25px_-5px_rgba(6,182,212,0.2)]">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-syne text-lg font-bold text-cyan-300 neon-glow-cyan">
-                  Neon Night
-                </span>
-                <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-500/30">
-                  CYBER GLOW
-                </span>
-              </div>
-              <p className="text-xs text-slate-300 leading-relaxed mb-6">
-                Vibrant electric cyan & magenta on dark obsidian. Pulsing stars, glow typography, and electronic synth ambiance.
-              </p>
-            </div>
-            <Link
-              href="/w/priya-25th-birthday"
-              className="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition"
-            >
-              <span>View Neon Demo</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-
-          {/* 2. Pastel Dream */}
-          <div className="rounded-3xl border border-pink-400/30 bg-[#161220]/60 p-6 backdrop-blur-xl flex flex-col justify-between hover:border-pink-400 transition-all shadow-[0_0_25px_-5px_rgba(244,114,182,0.2)]">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-serif text-lg font-bold text-pink-200">
-                  Pastel Dream
-                </span>
-                <span className="text-[10px] font-mono text-pink-300 bg-pink-950/80 px-2 py-0.5 rounded border border-pink-400/30">
-                  ROMANTIC
-                </span>
-              </div>
-              <p className="text-xs text-pink-100/80 leading-relaxed mb-6">
-                Soft twilight rose, drifting floral petals, gentle serif calligraphy, and tender acoustic piano music.
-              </p>
-            </div>
-            <Link
-              href="/w/sam-and-alex-5th-anniversary"
-              className="w-full py-2.5 rounded-xl bg-pink-400 hover:bg-pink-300 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition"
-            >
-              <span>View Pastel Demo</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-
-          {/* 3. Royal Gold */}
-          <div className="rounded-3xl border border-amber-400/40 bg-slate-950/70 p-6 backdrop-blur-xl flex flex-col justify-between hover:border-amber-400 transition-all shadow-[0_0_25px_-5px_rgba(245,197,24,0.2)]">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-cinzel text-lg font-bold text-amber-200">
-                  Royal Gold
-                </span>
-                <span className="text-[10px] font-mono text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-500/30">
-                  REGAL LUXE
-                </span>
-              </div>
-              <p className="text-xs text-amber-100/80 leading-relaxed mb-6">
-                24k brushed gold foil on midnight velvet, regal Cinzel typography, and stately orchestral celebration anthems.
-              </p>
-            </div>
-            <Link
-              href="/w/rohan-graduation-gala"
-              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-amber-500/20"
-            >
-              <span>View Royal Demo</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Conversion Banner */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full text-center">
-        <div className="p-8 sm:p-14 rounded-3xl bg-gradient-to-b from-amber-500/10 via-slate-900/60 to-slate-950/80 border border-amber-400/30 shadow-2xl relative overflow-hidden">
-          <div className="h-16 w-16 mx-auto rounded-2xl bg-amber-400/10 text-amber-400 flex items-center justify-center mb-6">
-            <Cake className="h-8 w-8" />
-          </div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-4 font-syne">
-            Ready to Surprise Someone Special?
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto mb-8">
-            Create an unforgettable cinematic tribute in less than 3 minutes. Free to build, permanent shareable URL, downloadable luxury QR tag.
-          </p>
-          <Link
-            href="/create"
-            className="inline-flex items-center gap-2 py-4 px-8 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-black text-sm shadow-xl shadow-amber-500/25 transition cursor-pointer"
-          >
-            <Sparkles className="h-4 w-4" />
-            <span>Start Creating Now</span>
+          <p>The best gifts say, “I was thinking of you.”</p>
+          <Link className="wl-button" href="/create">
+            Make their moment <ArrowUpRight size={19} />
           </Link>
+          <span className="wl-cta-heart" aria-hidden="true">
+            ♡
+          </span>
+        </section>
+      </main>
+      <footer className="wl-footer wl-container">
+        <div>
+          <Link href="/" className="wl-logo">
+            <span>✳</span> wishly.
+          </Link>
+          <p>For the moments. For the people. For the feeling.</p>
         </div>
-      </section>
-
-      <Footer />
+        <nav aria-label="Footer navigation">
+          <Link href="/templates">Templates</Link>
+          <Link href="/dashboard">Your pages</Link>
+          <Link href="/create">
+            Create a page <ArrowRight size={14} />
+          </Link>
+        </nav>
+        <span className="wl-footer-note">
+          Made with a little extra heart. ♡
+        </span>
+      </footer>
     </div>
   );
 }
