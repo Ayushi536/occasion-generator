@@ -1,70 +1,127 @@
+
 import { NextRequest, NextResponse } from 'next/server';
+import { v2 as cloudinary } from 'cloudinary';
 import { getCurrentUser } from '@/lib/auth';
+
+export const runtime = 'nodejs';
+
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50 MB
+
+const ALLOWED_IMAGES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+]);
+
+const ALLOWED_VIDEOS = new Set([
+  'video/mp4',
+  'video/webm',
+  'video/quicktime',
+]);
 
 export async function POST(req: NextRequest) {
   try {
+    // Preserve the existing auth lookup and sandbox behavior.
     const user = await getCurrentUser();
-    // Allow upload for authenticated users or prospective creators in sandbox session
+    void user;
 
     const formData = await req.formData();
-    const file = formData.get('file') as File | null;
-    const mediaType = (formData.get('type') as string) || 'image';
+    const file = formData.get('file');
+    const mediaType = formData.get('type') || 'image';
 
-    if (!file) {
-      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+    if (!(file instanceof File)) {
+      return NextResponse.json(
+        { error: 'No file uploaded' },
+        { status: 400 },
+      );
     }
 
-    // Check Cloudinary environment variables
+    if (mediaType !== 'image' && mediaType !== 'video') {
+      return NextResponse.json(
+        { error: 'Type must be image or video' },
+        { status: 400 },
+      );
+    }
+
+    const allowedTypes =
+      mediaType === 'video' ? ALLOWED_VIDEOS : ALLOWED_IMAGES;
+    const maxSize =
+      mediaType === 'video' ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
+
+    if (!allowedTypes.has(file.type)) {
+      return NextResponse.json(
+        { error: `Unsupported ${mediaType} format` },
+        { status: 400 },
+      );
+    }
+
+    if (file.size === 0 || file.size > maxSize) {
+      return NextResponse.json(
+        {
+          error: `File must be non-empty and no larger than ${
+            maxSize / (1024 * 1024)
+          } MB`,
+        },
+        { status: 400 },
+      );
+    }
+
     const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
     const apiKey = process.env.CLOUDINARY_API_KEY;
     const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
-    if (cloudName && apiKey && apiSecret) {
-      // Direct Cloudinary upload
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      const base64Data = buffer.toString('base64');
-      const dataUri = `data:${file.type};base64,${base64Data}`;
-
-      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/${mediaType === 'video' ? 'video' : 'image'}/upload`;
-      const cloudRes = await fetch(uploadUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          file: dataUri,
-          upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET || 'ml_default',
-        }),
-      });
-
-      if (cloudRes.ok) {
-        const cloudData = await cloudRes.json();
-        return NextResponse.json({
-          url: cloudData.secure_url,
-          public_id: cloudData.public_id,
-          format: cloudData.format,
-        });
-      }
+    if (!cloudName || !apiKey || !apiSecret) {
+      return NextResponse.json(
+        { error: 'Cloudinary is not configured on the server' },
+        { status: 503 },
+      );
     }
 
-    // Fallback: Convert to base64 Data URL for zero-dependency instant reliable preview
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const mimeType =
-      file.type ||
-      (mediaType === 'video'
-        ? 'video/mp4'
-        : mediaType === 'audio'
-        ? 'audio/mpeg'
-        : 'image/jpeg');
-    const dataUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
-
-    return NextResponse.json({
-      url: dataUrl,
-      name: file.name,
-      size: file.size,
+    cloudinary.config({
+      cloud_name: cloudName,
+      api_key: apiKey,
+      api_secret: apiSecret,
     });
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    const result = await new Promise<{
+      secure_url: string;
+      public_id: string;
+      format: string;
+    }>((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: process.env.CLOUDINARY_UPLOAD_FOLDER || 'wishly',
+          resource_type: mediaType,
+        },
+        (error, uploaded) => {
+          if (error) {
+            reject(error);
+          } else if (!uploaded) {
+            reject(new Error('Cloudinary returned no upload result'));
+          } else {
+            resolve(uploaded);
+          }
+        },
+      ).end(buffer);
+    });
+
+    return NextResponse.json(
+      {
+        url: result.secure_url,
+        public_id: result.public_id,
+        format: result.format,
+      },
+      { status: 201 },
+    );
   } catch (error) {
     console.error('Media upload error:', error);
-    return NextResponse.json({ error: 'Failed to process media file' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to process media file' },
+      { status: 500 },
+    );
   }
 }
