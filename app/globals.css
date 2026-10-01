@@ -1,0 +1,112 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Great+Vibes&family=Noto+Serif+Devanagari:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800;900&display=swap');
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-syne: 'Syne', sans-serif;
+  --font-cinzel: 'Cinzel', serif;
+  --font-hindi: 'Noto Serif Devanagari', serif;
+  --font-romantic: 'Great Vibes', cursive;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #090a0f;
+  color: #f1f5f9;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-syne {
+  font-family: var(--font-syne);
+}
+
+.font-cinzel {
+  font-family: var(--font-cinzel);
+}
+
+.font-hindi {
+  font-family: var(--font-hindi);
+}
+
+.font-romantic {
+  font-family: var(--font-romantic);
+}
+
+/* Custom glowing effects for Neon Night */
+.neon-glow-cyan {
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.7), 0 0 30px rgba(6, 182, 212, 0.4);
+}
+
+.neon-glow-magenta {
+  text-shadow: 0 0 10px rgba(236, 72, 153, 0.7), 0 0 30px rgba(236, 72, 153, 0.4);
+}
+
+.box-neon-cyan {
+  box-shadow: 0 0 20px -3px rgba(6, 182, 212, 0.35), inset 0 0 15px -3px rgba(6, 182, 212, 0.15);
+}
+
+.box-neon-magenta {
+  box-shadow: 0 0 20px -3px rgba(236, 72, 153, 0.35), inset 0 0 15px -3px rgba(236, 72, 153, 0.15);
+}
+
+/* Royal Gold luxury sheen */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FFF6D6 0%, #F5C518 45%, #D4AF37 70%, #996515 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-border {
+  border-image: linear-gradient(135deg, #F5C518, #996515, #F5C518) 1;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.45);
+}
+
+/* Floating animation utilities */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(2deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-float {
+  animation: floatSlow 5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}

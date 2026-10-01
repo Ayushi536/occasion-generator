@@ -1,0 +1,6 @@
+{
+  "name": "Wishly – Custom Occasion Page Generator",
+  "description": "Create cinematic, interactive personalized celebration websites with custom animations, memory timelines, audio & video for birthdays, anniversaries, and milestones.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
