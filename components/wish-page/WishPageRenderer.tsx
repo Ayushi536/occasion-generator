@@ -153,7 +153,11 @@ export default function WishPageRenderer({ page }: WishPageRendererProps) {
   }
 
   return (
-    <div className={`min-h-screen ${theme.bgClass} relative selection:bg-amber-400 selection:text-slate-950`}>
+    <div
+      className={`min-h-screen ${theme.bgClass} ${theme.selectionClass} relative`}
+      style={{ background: theme.pageBackground }}
+      data-template={page.template}
+    >
       {/* 1. Tap-to-begin Intro Curtain */}
       <IntroCurtain page={page} onBegin={handleBegin} />
 

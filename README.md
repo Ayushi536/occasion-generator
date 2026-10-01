@@ -1,209 +1,411 @@
-# Custom Occasion Page Generator
+<div align="center">
+  <img src="./docs/assets/wishly-logo.png" alt="Wishly logo" width="420" />
 
-> **W3Grads Full Stack Development — Vibe Coding Examination | Problem Statement 02**
+  # Wishly
 
-A full-stack platform that lets a creator build a personalized, animated birthday/anniversary/occasion webpage from a short form, photos/videos, language, memories and a visual template, then publish it through a unique shareable URL.
+  ### Turn a moment into a page worth remembering.
 
-## Team
+  **Custom Occasion Page Generator · W3Grads Full Stack Development · PS02**
 
-| Member | Name | GitHub | Primary Responsibility |
-|---|---|---|---|
-| M1 | TBD | TBD | Motion / Public Wish Page / Templates |
-| M2 | TBD | TBD | Creator Frontend / Wizard / Dashboard |
-| M3 | TBD | TBD | Backend / MongoDB / Auth / APIs |
-| M4 | TBD | TBD | Media / Cloudinary / QR / Sharing / OG |
-| M5 | TBD | TBD | DevOps / Integration / QA / Documentation |
+  <p>
+    <img src="https://img.shields.io/badge/Next.js-15-black?logo=next.js" alt="Next.js 15" />
+    <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=111827" alt="React 19" />
+    <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Bun-1.x-fbf0df?logo=bun&logoColor=111827" alt="Bun" />
+    <img src="https://img.shields.io/badge/Cloudinary-Media-3448C5?logo=cloudinary&logoColor=white" alt="Cloudinary" />
+    <img src="https://img.shields.io/badge/GitHub%20Actions-CI-2088FF?logo=githubactions&logoColor=white" alt="GitHub Actions" />
+  </p>
 
-## Live Links
+  <p>
+    <a href="#-what-is-wishly">What is Wishly?</a> ·
+    <a href="#-feature-tour">Feature Tour</a> ·
+    <a href="#-architecture">Architecture</a> ·
+    <a href="#-quick-start">Quick Start</a> ·
+    <a href="#-api-surface">API</a> ·
+    <a href="#-team">Team</a>
+  </p>
+</div>
 
-- Frontend: TBD
-- Backend: TBD
-- Demo video: TBD
+---
 
-## Tech Stack
+## 💌 What is Wishly?
 
-- Next.js / React
-- Tailwind CSS
-- Framer Motion
-- Node.js / Express or Next.js Route Handlers
-- MongoDB Atlas / Mongoose
-- Cloudinary
-- JWT + bcrypt
-- Zod
-- Vercel / Netlify
-- Render / Railway if separate backend
+Wishly is a full-stack web app for creating **personalized celebration pages** for birthdays, anniversaries, friendships and other meaningful occasions.
 
-## Core Features
+Instead of sending a plain message, a creator can build a small, shareable experience with a themed page, memories, media and interactive moments — then publish it through a unique URL.
 
-### P0 — Must Have
-- [ ] Signup / login / logout
-- [ ] Protected creator dashboard
-- [ ] Seeded admin
-- [ ] Six-step creation wizard
-- [ ] English / Hinglish / Hindi
-- [ ] Upload up to 15 images and 2 videos
-- [ ] Cloudinary media pipeline
-- [ ] At least 3 distinct templates
-- [ ] Unique slug and public URL
-- [ ] Copy link / QR / WhatsApp sharing
-- [ ] Animated public wish page
-- [ ] Creator dashboard CRUD
+> **The idea:** less "Happy Birthday 🎂" in a chat, more "I made this whole page for you." 💗
 
-### P1 — Should Have
-- [ ] Autosave
-- [ ] Live preview
-- [ ] Image compression / upload progress
-- [ ] Dynamic OG image
-- [ ] Countdown lock
-- [ ] Password protection
-- [ ] Wishes wall
-- [ ] Analytics
-- [ ] Admin moderation
-- [ ] Performance / reduced-motion support
+---
 
-### P2 — Bonus
-- [ ] AI message suggestions
-- [ ] Individual-page auto deployment
-- [ ] Microphone candle blow
-- [ ] Scratch card / gift box
-- [ ] 3D scene
-- [ ] Music sync
-- [ ] Google OAuth
+## ✨ Feature Tour
 
-## Architecture
+| Experience | What Wishly provides |
+|---|---|
+| 🪄 Creator flow | Guided page creation, review and publishing flow |
+| 🎨 Templates | Dedicated template gallery and reusable visual themes |
+| ✍️ AI writing | Server-side AI endpoints for wish/message generation |
+| 🖼️ Media | Image upload pipeline backed by Cloudinary |
+| 🔐 Authentication | Signup, login, logout, session checks and protected creator areas |
+| 📊 Creator workspace | Dashboard, edit flow and page insights |
+| 🌐 Public pages | Shareable `/w/[slug]` celebration experiences |
+| 🕯️ Interaction | Public wish/candle interactions on generated pages |
+| 🛡️ Admin | Admin dashboard and moderation-oriented endpoints |
+| ⚙️ CI | GitHub Actions install → lint → production build workflow |
+
+<details>
+<summary><strong>🎯 Product flow</strong></summary>
 
 ```text
-Creator Browser
-      |
-      v
-Next.js / React
-      |
-      | /api/v1
-      v
-Node + Express / Next Route Handlers
-      |
-      +------> MongoDB Atlas
-      |
-      +------> Cloudinary
-      |
-      +------> Optional AI API
-      |
-      +------> Optional Vercel/Netlify API
-      |
-      v
-Public Wish Page
-/w/[slug]
+Creator
+  ↓
+Sign up / Login
+  ↓
+Create occasion
+  ↓
+Choose / configure theme
+  ↓
+Add story, memories & media
+  ↓
+Use AI assistance where needed
+  ↓
+Review
+  ↓
+Publish
+  ↓
+Unique public URL: /w/[slug]
+  ↓
+Recipient + guests interact with the page
+```
+</details>
+
+---
+
+## 🧭 Feature Tour by Route
+
+| Route | Purpose |
+|---|---|
+| `/` | Landing / public entry point |
+| `/login` | Creator login |
+| `/signup` | Creator signup |
+| `/dashboard` | Creator workspace |
+| `/create` | Create an occasion page |
+| `/create/[id]/review` | Review before publish |
+| `/templates` | Browse templates |
+| `/pages/[id]/edit` | Edit a page |
+| `/pages/[id]/insights` | Page-level insights |
+| `/admin` | Admin workspace |
+| `/w/[slug]` | Public generated wish page |
+
+---
+
+## 🧱 Architecture
+
+```mermaid
+flowchart LR
+    U[Creator / Guest Browser]
+    UI[Next.js + React UI]
+    API[Next.js Route Handlers]
+    AUTH[JWT + bcrypt]
+    STORE[Wishly Store\nJSON-backed persistent file + in-memory cache]
+    CLOUD[Cloudinary]
+    AI[AI Wish APIs]
+
+    U --> UI
+    UI --> API
+    API --> AUTH
+    API --> STORE
+    API --> CLOUD
+    API --> AI
+    API --> U
 ```
 
-## Main Routes
+### Current implementation note
 
-```text
-/                 Landing
-/login            Login
-/signup           Signup
-/dashboard        Creator dashboard
-/create           Six-step wizard
-/pages/:id/edit   Edit page
-/pages/:id/insights
-/templates        Template gallery
-/admin             Admin
-/w/:slug          Public generated wish page
-```
+The current main branch uses a **file-backed JSON store with an in-memory runtime cache** in `lib/db.ts`. MongoDB was part of the original problem-statement architecture, but the current implementation is not wired to MongoDB. The documentation intentionally reflects the code that is actually in the repository.
 
-## API Convention
+---
 
-Base URL:
+## 🛠️ Tech Stack
 
-```text
-/api/v1
-```
+**Frontend**
 
-Success:
+`Next.js 15` · `React 19` · `TypeScript` · `Tailwind CSS`
 
-```json
-{
-  "success": true,
-  "data": {},
-  "message": "optional"
-}
-```
+**Application / API**
 
-Error:
+`Next.js Route Handlers` · `JWT` · `bcryptjs` · `Zod` where validation is applied
 
-```json
-{
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "...",
-    "details": []
-  }
-}
-```
+**Media**
 
-## Local Setup
+`Cloudinary`
+
+**Development**
+
+`Bun` · `ESLint` · `Git` · `GitHub Actions`
+
+---
+
+## 🚀 Quick Start
+
+### 1. Clone
 
 ```bash
-git clone <REPOSITORY_URL>
+git clone https://github.com/Ayushi536/occasion-generator.git
 cd occasion-generator
 ```
 
-Install dependencies according to the final project structure.
-
-Create environment file:
+### 2. Install dependencies
 
 ```bash
-cp .env.example .env
+bun install
 ```
 
-Fill only the required values. Never commit `.env`.
+### 3. Configure environment
 
-## Environment Variables
+```bash
+cp .env.example .env.local
+```
 
-See `.env.example`.
+Fill the required values before using media upload or production deployments.
 
-Never commit:
-- MongoDB passwords
-- JWT secrets
-- Cloudinary API secret
-- deployment tokens
-- AI API keys
+### 4. Run locally
 
-## Test Credentials
+```bash
+bun run dev
+```
+
+Open `http://localhost:3000`.
+
+### 5. Validate before pushing
+
+```bash
+bun run lint
+bun run build
+```
+
+---
+
+## 🔐 Demo / Local Seed Accounts
+
+The current store contains development defaults used for local/demo flows.
 
 | Role | Email | Password |
 |---|---|---|
-| Admin | TBD | TBD |
-| Creator | TBD | TBD |
+| Creator | `creator@wishly.app` | `wishly123` |
+| Admin | `admin@wishly.app` | `admin123` |
 
-## Documentation
+> ⚠️ These are development/demo credentials. Replace seeded credentials and secrets before any real deployment.
 
-- [SPEC.md](./SPEC.md) — product and technical specification
-- [TEAM_TASKS.md](./TEAM_TASKS.md) — live team task board
-- [PROMPTS.md](./PROMPTS.md) — important AI prompts used during the exam
-- [CONTRIBUTING.md](./CONTRIBUTING.md) — team Git workflow
+---
 
-## Known Limitations
+## ☁️ Media Uploads
 
-Update this honestly before submission.
+Wishly uses Cloudinary for media handling. The application exposes a dedicated upload route and keeps the Cloudinary credentials server-side.
 
-- TBD
+Expected variables:
 
-## Submission Checklist
+```env
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+CLOUDINARY_UPLOAD_FOLDER=wishly
+```
 
-- [ ] Final code on final/default branch
-- [ ] Every member appears in Git history
-- [ ] README complete
-- [ ] `.env.example` complete
-- [ ] `PROMPTS.md` complete
-- [ ] Live frontend
-- [ ] Live backend if separate
-- [ ] Demo video
-- [ ] Test credentials
-- [ ] At least 3 sample generated pages
-- [ ] Birthday sample
-- [ ] Anniversary sample
-- [ ] At least 2 languages
-- [ ] Mobile recording
-- [ ] No secrets committed
-- [ ] P0 flow tested
+---
+
+## 🤖 AI Surface
+
+Wishly currently exposes server-side routes for AI-assisted wish generation, including:
+
+```text
+POST /api/ai/wish
+POST /api/ai/generate-wish
+```
+
+The UI can use these routes to turn occasion/context inputs into personalized message content while keeping provider credentials out of the browser.
+
+---
+
+## 🔌 API Surface
+
+### Authentication
+
+```text
+POST /api/auth/signup
+POST /api/auth/login
+POST /api/auth/logout
+GET  /api/auth/me
+```
+
+### Occasion pages
+
+```text
+GET    /api/pages
+POST   /api/pages
+GET    /api/pages/[id]
+PATCH  /api/pages/[id]
+DELETE /api/pages/[id]
+POST   /api/pages/[id]/duplicate
+```
+
+### Public wish pages
+
+```text
+GET  /api/w/[slug]
+POST /api/w/[slug]/wish
+POST /api/w/[slug]/candle
+```
+
+### Media
+
+```text
+POST /api/upload
+```
+
+### Admin
+
+```text
+GET /api/admin
+```
+
+> Endpoint behavior and payload details are defined by the corresponding route handlers under `app/api/**`.
+
+---
+
+## 🧪 CI / Quality Gate
+
+The repository contains a GitHub Actions workflow at:
+
+```text
+.github/workflows/ci.yml
+```
+
+The workflow runs on pushes to `dev`, `main` and feature branches, and on pull requests into `dev` / `main`.
+
+Current checks:
+
+```text
+1. Checkout
+2. Setup Bun
+3. bun install --frozen-lockfile
+4. bun run lint
+5. bun run build
+```
+
+This creates a repeatable quality gate before integration.
+
+---
+
+## 👥 Team
+
+| Module | GitHub | Primary responsibility | Integration |
+|---|---|---|---|
+| M1 | `Ayush-Agrawal673` | Public Wish Page / Templates | ✅ merged into `dev` |
+| M2 | `Aryan-222005` | Creator Frontend / Wizard / Dashboard | ✅ merged into `dev` |
+| M3 | `Ayushibansal805` | Backend / Auth / APIs / Data Layer | ✅ merged into `dev` |
+| M4 | `ayushagrawalgla` | Cloudinary Media Upload | ✅ merged into `dev` |
+| M5 | `Ayushi536` | DevOps / Integration / QA / Documentation | ✅ merged into `dev` |
+
+### Branch strategy
+
+```text
+feature/m1-templates ─┐
+feature/m2-wizard ─────┤
+feature/m3-backend ────┤
+feature/m4-media ──────┼──→ dev ───→ main
+feature/m5-devops ─────┘
+```
+
+---
+
+## 📂 Project Structure
+
+```text
+occasion-generator/
+├── app/
+│   ├── admin/
+│   ├── api/
+│   │   ├── admin/
+│   │   ├── ai/
+│   │   ├── auth/
+│   │   ├── pages/
+│   │   ├── upload/
+│   │   └── w/[slug]/
+│   ├── create/
+│   ├── dashboard/
+│   ├── login/
+│   ├── pages/
+│   ├── signup/
+│   ├── templates/
+│   └── w/[slug]/
+├── components/
+│   └── wish-page/
+├── hooks/
+├── lib/
+│   ├── auth.ts
+│   ├── db.ts
+│   ├── types.ts
+│   └── utils.ts
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── .env.example
+├── package.json
+├── bun.lock
+├── SPEC.md
+├── TEAM_TASKS.md
+└── PROMPTS.md
+```
+
+---
+
+## 🔭 Current Status
+
+| Area | Status |
+|---|---|
+| Team branch integration | ✅ complete |
+| `dev` integration | ✅ complete |
+| `dev` → `main` integration | ✅ complete |
+| Auth APIs | ✅ implemented |
+| Creator pages / dashboard | ✅ implemented |
+| Cloudinary upload route | ✅ implemented |
+| AI wish endpoints | ✅ implemented |
+| Public wish interactions | ✅ implemented |
+| GitHub Actions CI | ✅ committed and integrated |
+| Production deployment | 🟡 pending verification |
+| Final end-to-end QA | 🟡 pending verification |
+| Live URL / demo video | 🟡 pending |
+
+---
+
+## 🗺️ Roadmap
+
+```text
+✅ Team foundation
+✅ M1 public experience
+✅ M2 creator experience
+✅ M3 backend + auth
+✅ M4 media pipeline
+✅ M5 CI + integration
+⬜ Final QA matrix
+⬜ Production deployment
+⬜ Demo polish / assets
+⬜ Final submission package
+```
+
+---
+
+## 🔗 Repository
+
+**GitHub:** https://github.com/Ayushi536/occasion-generator
+
+---
+
+<div align="center">
+
+### Built for meaningful moments. 💗
+
+*Create it. Personalize it. Share it. Remember it.*
+
+</div>
