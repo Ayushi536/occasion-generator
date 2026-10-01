@@ -1,0 +1,77 @@
+/* Shared, scalable Wishly identity on light and dark surfaces. */
+.brand-logo {
+  --brand-ink: #283b32;
+  --brand-coral: #c85b46;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  vertical-align: middle;
+  white-space: nowrap;
+  line-height: 1;
+}
+.brand-logo--inverse {
+  --brand-ink: #fff8ee;
+  --brand-coral: #ee977e;
+}
+.brand-logo__mark {
+  width: 41px;
+  height: 41px;
+  flex-shrink: 0;
+  color: var(--brand-coral);
+  transition: transform 220ms ease;
+}
+.brand-logo__wordmark {
+  color: var(--brand-ink);
+  font-family: var(--font-sans);
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1.8px;
+  line-height: 1.1;
+}
+.brand-logo__dot {
+  color: var(--brand-coral);
+  margin-left: 1px;
+}
+.brand-logo--compact {
+  gap: 8px;
+}
+.brand-logo--compact .brand-logo__mark {
+  width: 33px;
+  height: 33px;
+}
+.brand-logo--compact .brand-logo__wordmark {
+  font-size: 26px;
+  letter-spacing: -1.4px;
+}
+a:hover .brand-logo__mark {
+  transform: rotate(-5deg);
+}
+@media (max-width: 600px) {
+  .brand-logo {
+    gap: 7px;
+  }
+  .brand-logo__mark {
+    width: 33px;
+    height: 33px;
+  }
+  .brand-logo__wordmark {
+    font-size: 27px;
+    letter-spacing: -1.5px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo__mark {
+    transition: none;
+  }
+  a:hover .brand-logo__mark {
+    transform: none;
+  }
+}
+@media (forced-colors: active) {
+  .brand-logo__wordmark,
+  .brand-logo__mark,
+  .brand-logo__dot {
+    color: LinkText;
+  }
+}

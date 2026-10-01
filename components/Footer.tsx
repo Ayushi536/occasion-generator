@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import BrandLogo from '@/components/BrandLogo';
 import { usePathname } from 'next/navigation';
-import { Sparkles, Heart } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 export default function Footer() {
   const pathname = usePathname();
@@ -13,11 +14,8 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex flex-col items-center md:items-start gap-2">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="font-syne text-lg font-bold text-white">Wishly</span>
-              <span className="text-xs text-amber-400">
-                <Sparkles className="h-3 w-3" />
-              </span>
+            <Link href="/" className="inline-flex" aria-label="Wishly home">
+              <BrandLogo tone="inverse" compact />
             </Link>
             <p className="text-xs text-slate-400 max-w-sm text-center md:text-left">
               Crafting unforgettable cinematic celebration pages with animated memories, music, and love.

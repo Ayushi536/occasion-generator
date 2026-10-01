@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import BrandLogo from '@/components/BrandLogo';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Sparkles, Lock, Mail, User, ArrowRight } from 'lucide-react';
+import { Lock, Mail, User, ArrowRight } from 'lucide-react';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -57,9 +58,8 @@ export default function SignupPage() {
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
         <div className="max-w-md w-full p-8 rounded-3xl border border-white/10 bg-slate-900/60 backdrop-blur-xl shadow-2xl">
           <div className="text-center mb-6">
-            <Link href="/" className="inline-flex items-center gap-1.5 font-syne text-2xl font-black text-white mb-2">
-              Wishly
-              <Sparkles className="h-4 w-4 text-amber-400" />
+            <Link href="/" className="inline-flex mb-4" aria-label="Wishly home">
+              <BrandLogo tone="inverse" />
             </Link>
             <h1 className="text-xl font-bold text-white">Create an Account</h1>
             <p className="text-xs text-slate-400 mt-1">

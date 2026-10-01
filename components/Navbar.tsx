@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import BrandLogo from '@/components/BrandLogo';
 import { usePathname, useRouter } from 'next/navigation';
 import { Sparkles, Plus, LogOut, LayoutDashboard, Shield, Heart } from 'lucide-react';
 import { UserSession } from '@/lib/types';
@@ -83,14 +84,9 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-[#090a0f]/80 backdrop-blur-xl transition-all">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Zone 1: Single text wordmark */}
-        <Link href="/" className="group flex items-center gap-2">
-          <span className="font-syne text-xl font-extrabold tracking-tight text-white group-hover:text-amber-400 transition-colors">
-            Wishly
-          </span>
-          <span className="inline-flex items-center text-xs font-semibold text-amber-400/90">
-            <Sparkles className="h-3.5 w-3.5" />
-          </span>
+        {/* Shared Wishly identity */}
+        <Link href="/" className="group inline-flex items-center" aria-label="Wishly home">
+          <BrandLogo tone="inverse" compact />
         </Link>
 
         {/* Zone 2: 4-6 clean text navigation links */}

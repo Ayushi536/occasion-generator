@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import BrandLogo from "@/components/BrandLogo";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -167,7 +168,7 @@ export default function HomePage() {
       </a>
       <header className="wl-header">
         <Link href="/" className="wl-logo" aria-label="Wishly home">
-          <span>✳</span> wishly<span className="wl-logo-dot">.</span>
+          <BrandLogo />
         </Link>
         <nav
           className={`wl-nav ${menuOpen ? "wl-nav-open" : ""}`}
@@ -716,8 +717,8 @@ export default function HomePage() {
       </main>
       <footer className="wl-footer wl-container">
         <div>
-          <Link href="/" className="wl-logo">
-            <span>✳</span> wishly.
+          <Link href="/" className="wl-logo" aria-label="Wishly home">
+            <BrandLogo compact />
           </Link>
           <p>For the moments. For the people. For the feeling.</p>
         </div>
