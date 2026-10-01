@@ -1,20 +1,17 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import {
   Sparkles,
   Flame,
   Heart,
-  RotateCcw,
   Cake,
   Award,
   Crown,
   Zap,
   PartyPopper,
-  Star,
-  CheckCircle2,
 } from 'lucide-react';
 import { WishPage } from '@/lib/types';
 import { TEMPLATES } from './theme-config';
@@ -33,8 +30,40 @@ type CakeStyle =
 
 type CandleStyle = 'striped' | 'sparkler' | 'milestone' | 'heart' | 'cosmic';
 
+const FINALE_STYLES = {
+  'neon-night': {
+    shell: 'border-cyan-400/25 bg-[#07101f]/75 shadow-[0_0_70px_rgba(34,211,238,0.10)]',
+    eyebrow: 'text-cyan-300 border-cyan-400/30 bg-cyan-400/10',
+    heading: 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-white to-pink-300',
+    toolbar: 'bg-[#081326]/85 border-cyan-400/20',
+    motif: 'border-cyan-300/35 text-cyan-200 shadow-[0_0_24px_rgba(34,211,238,0.18)]',
+    divider: 'from-cyan-400 via-pink-400 to-violet-400',
+    kicker: 'Finale protocol',
+  },
+  'pastel-dream': {
+    shell: 'border-pink-200/25 bg-[#39264b]/60 shadow-[0_22px_80px_rgba(15,8,24,0.25)] rounded-[3.5rem]',
+    eyebrow: 'text-pink-100 border-pink-200/35 bg-pink-200/10',
+    heading: 'text-transparent bg-clip-text bg-gradient-to-r from-pink-100 via-rose-200 to-violet-200',
+    toolbar: 'bg-[#4b315f]/60 border-pink-200/25 rounded-[2rem]',
+    motif: 'border-pink-200/40 text-pink-100 shadow-[0_0_28px_rgba(251,207,232,0.18)] rounded-[40%_60%_45%_55%]',
+    divider: 'from-pink-200 via-rose-300 to-violet-300',
+    kicker: 'A wish in bloom',
+  },
+  'royal-gold': {
+    shell: 'border-amber-400/30 bg-[#130f0d]/85 shadow-[0_24px_90px_rgba(0,0,0,0.35)] rounded-t-[5rem]',
+    eyebrow: 'text-amber-200 border-amber-400/35 bg-amber-400/10',
+    heading: 'text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-yellow-300 to-amber-500',
+    toolbar: 'bg-[#17110e]/90 border-amber-400/25',
+    motif: 'border-amber-400/45 text-amber-200 shadow-[0_0_28px_rgba(212,175,55,0.16)] rotate-45',
+    divider: 'from-transparent via-amber-300 to-transparent',
+    kicker: 'The ceremonial finale',
+  },
+} as const;
+
 export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
   const theme = TEMPLATES[page.template] || TEMPLATES['neon-night'];
+  const finale = FINALE_STYLES[page.template] || FINALE_STYLES['neon-night'];
+  const shouldReduceMotion = useReducedMotion();
   const [candlesBlown, setCandlesBlown] = useState(false);
   const [candlesCount, setCandlesCount] = useState(page.candlesCount || 0);
   const [isBlowing, setIsBlowing] = useState(false);
@@ -152,7 +181,7 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
       '#fbbf24',
       '#ffd700',
     ];
-    const newBalloons = new Array(22).fill(0).map((_, i) => ({
+    const newBalloons = new Array(shouldReduceMotion ? 0 : 22).fill(0).map((_, i) => ({
       id: i,
       color: balloonColors[i % balloonColors.length],
       left: 3 + Math.random() * 94,
@@ -164,41 +193,43 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
 
     // 2. Multi-stage canvas confetti & fireworks explosions
     const end = Date.now() + 3.8 * 1000;
-    const colors = ['#f59e0b', '#ec4899', '#06b6d4', '#8b5cf6', '#ffffff', '#ffd700'];
+    const colors = theme.confettiColors;
 
     // Left cannon
     confetti({
-      particleCount: 90,
+      particleCount: shouldReduceMotion ? 24 : 90,
       spread: 80,
       angle: 60,
       origin: { x: 0.1, y: 0.7 },
       colors,
     });
 
-    // Right cannon
-    confetti({
-      particleCount: 90,
-      spread: 80,
-      angle: 120,
-      origin: { x: 0.9, y: 0.7 },
-      colors,
-    });
-
-    // Continuous starry fireworks burst interval
-    const interval = setInterval(() => {
-      if (Date.now() > end) {
-        clearInterval(interval);
-        return;
-      }
+    if (!shouldReduceMotion) {
+      // Right cannon
       confetti({
-        particleCount: 22,
-        startVelocity: 35,
-        spread: 360,
-        ticks: 70,
-        origin: { x: 0.15 + Math.random() * 0.7, y: 0.15 + Math.random() * 0.45 },
+        particleCount: 90,
+        spread: 80,
+        angle: 120,
+        origin: { x: 0.9, y: 0.7 },
         colors,
       });
-    }, 240);
+
+      // Continuous starry fireworks burst interval
+      const interval = setInterval(() => {
+        if (Date.now() > end) {
+          clearInterval(interval);
+          return;
+        }
+        confetti({
+          particleCount: 22,
+          startVelocity: 35,
+          spread: 360,
+          ticks: 70,
+          origin: { x: 0.15 + Math.random() * 0.7, y: 0.15 + Math.random() * 0.45 },
+          colors,
+        });
+      }, 240);
+    }
 
     // Record celebration count in DB
     try {
@@ -225,7 +256,7 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
   const isAnniversary = page.occasion === 'anniversary' || page.occasion === 'love';
 
   return (
-    <section className="relative py-24 px-4 sm:px-6 max-w-5xl mx-auto text-center overflow-hidden select-none">
+    <section className={`relative my-10 py-20 sm:py-24 px-4 sm:px-8 max-w-5xl mx-auto text-center overflow-hidden select-none border ${finale.shell}`}>
       {/* Background celebration spotlight & luminous ambiance */}
       <div
         className={`absolute inset-0 bg-gradient-to-t ${theme.accentGlow} to-transparent pointer-events-none opacity-40`}
@@ -241,7 +272,7 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
                   <motion.div
                     key={b.id}
                     initial={{ y: '110vh', opacity: 0 }}
-                    animate={{
+                    animate={shouldReduceMotion ? { opacity: 0 } : {
                       y: '-25vh',
                       opacity: [0, 0.95, 0.95, 0],
                       x: [0, (b.id % 2 === 0 ? 20 : -20), (b.id % 2 === 0 ? -15 : 15), 0],
@@ -258,7 +289,7 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
                     }}
                     className="absolute flex flex-col items-center pointer-events-auto cursor-pointer group"
                     onClick={() => handlePopBalloon(b.id)}
-                    title="Tap to pop balloon!"
+                    title="Tap to pop balloon"
                   >
                     {/* Balloon Body */}
                     <div
@@ -272,7 +303,7 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
                     {/* Balloon knot & waving string */}
                     <div className="w-2 h-1.5 rounded-full" style={{ backgroundColor: b.color }} />
                     <motion.div
-                      animate={{ rotate: [-8, 8, -8] }}
+                      animate={shouldReduceMotion ? undefined : { rotate: [-8, 8, -8] }}
                       transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
                       className="w-0.5 h-16 bg-white/40"
                     />
@@ -283,13 +314,27 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
       </div>
 
       <div className="relative z-10 flex flex-col items-center">
+        <div className={`mb-5 grid h-16 w-16 place-items-center border ${finale.motif}`} aria-hidden="true">
+          <div className={page.template === 'royal-gold' ? '-rotate-45' : ''}>
+            {isBirthday ? (
+              <Cake className="h-7 w-7" />
+            ) : isAnniversary ? (
+              <Heart className="h-7 w-7" />
+            ) : page.occasion === 'graduation' || page.occasion === 'milestone' ? (
+              <Award className="h-7 w-7" />
+            ) : (
+              <Sparkles className="h-7 w-7" />
+            )}
+          </div>
+        </div>
+        <div className={`mb-5 h-px w-32 bg-gradient-to-r ${finale.divider}`} aria-hidden="true" />
+
         {/* Occasion Finale Header */}
-        <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-amber-400 mb-3">
-          <PartyPopper className="h-4 w-4" />
-          <span>Interactive Grand Finale Climax</span>
+        <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] mb-3 ${finale.eyebrow}`}>
+          <span>{finale.kicker}</span>
         </div>
 
-        <h2 className={`text-3xl sm:text-5xl font-black text-white mb-3 ${theme.fontHeading} tracking-tight`}>
+        <h2 className={`text-3xl sm:text-5xl font-black mb-3 ${theme.fontHeading} ${finale.heading} tracking-tight`}>
           {isBirthday
             ? 'Make a Wish & Blow the Candles!'
             : isAnniversary
@@ -302,7 +347,7 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
         </p>
 
         {/* 1. CAKE DESIGN SELECTOR TOOLBAR (6 Unique Designs) */}
-        <div className="w-full max-w-2xl mx-auto mb-6 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl space-y-2.5">
+        <div className={`w-full max-w-2xl mx-auto mb-6 p-3 rounded-2xl border backdrop-blur-xl space-y-2.5 ${finale.toolbar}`}>
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
               <Cake className="h-3.5 w-3.5 text-amber-400" />
@@ -313,17 +358,18 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {[
-              { id: 'strawberry-velvet', name: '🍓 Strawberry Royale', color: 'from-rose-500 to-pink-600' },
-              { id: 'royal-gold', name: '👑 24K Imperial Gold', color: 'from-amber-400 to-yellow-600 text-slate-950' },
-              { id: 'rose-petal', name: '💖 Rose Romance', color: 'from-pink-400 to-rose-400 text-slate-950' },
-              { id: 'cyber-neon', name: '⚡ Cyberpunk Neon', color: 'from-cyan-400 to-blue-500 text-slate-950' },
-              { id: 'chocolate-truffle', name: '🍫 Belgian Truffle', color: 'from-amber-900 to-stone-900 text-amber-200' },
-              { id: 'rainbow-celestial', name: '🦄 Celestial Rainbow', color: 'from-purple-400 via-pink-400 to-cyan-400 text-slate-950' },
+              { id: 'strawberry-velvet', name: 'Strawberry Royale', color: 'from-rose-500 to-pink-600' },
+              { id: 'royal-gold', name: '24K Imperial Gold', color: 'from-amber-400 to-yellow-600 text-slate-950' },
+              { id: 'rose-petal', name: 'Rose Romance', color: 'from-pink-400 to-rose-400 text-slate-950' },
+              { id: 'cyber-neon', name: 'Cyber Neon', color: 'from-cyan-400 to-blue-500 text-slate-950' },
+              { id: 'chocolate-truffle', name: 'Belgian Truffle', color: 'from-amber-900 to-stone-900 text-amber-200' },
+              { id: 'rainbow-celestial', name: 'Celestial Color', color: 'from-purple-400 via-pink-400 to-cyan-400 text-slate-950' },
             ].map((c) => (
               <button
                 key={c.id}
                 type="button"
                 onClick={() => setCakeStyle(c.id as CakeStyle)}
+                aria-pressed={cakeStyle === c.id}
                 className={`py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer ${
                   cakeStyle === c.id
                     ? `bg-gradient-to-r ${c.color} shadow-lg scale-102 border border-white/40`
@@ -344,16 +390,17 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
 
             <div className="flex flex-wrap gap-1.5">
               {[
-                { id: 'striped', label: '🕯️ Classic Striped' },
-                { id: 'sparkler', label: '✨ Sparkler Fireworks' },
+                { id: 'striped', label: 'Classic Striped' },
+                { id: 'sparkler', label: 'Sparkler' },
                 { id: 'milestone', label: `#${milestoneNum} Milestone` },
-                { id: 'heart', label: '💖 Heart Flame' },
-                { id: 'cosmic', label: '🪄 Cosmic Neon' },
+                { id: 'heart', label: 'Heart Flame' },
+                { id: 'cosmic', label: 'Cosmic Neon' },
               ].map((cs) => (
                 <button
                   key={cs.id}
                   type="button"
                   onClick={() => setCandleStyle(cs.id as CandleStyle)}
+                  aria-pressed={candleStyle === cs.id}
                   className={`px-2.5 py-1 rounded-lg text-xs font-medium transition cursor-pointer ${
                     candleStyle === cs.id
                       ? 'bg-amber-400 text-slate-950 font-bold shadow-sm'
@@ -369,7 +416,7 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
 
         {/* 3. THE INTERACTIVE CAKE & CANDLE CENTERPIECE */}
         <motion.div
-          whileHover={{ scale: 1.02 }}
+          whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
           className="relative my-6 flex flex-col items-center justify-center cursor-pointer select-none"
           onClick={candlesBlown ? handleRelight : handleBlowCandles}
           title={candlesBlown ? 'Click to Relight Candles' : 'Click to Blow Candles!'}
@@ -386,7 +433,7 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
                       {!candlesBlown ? (
                         <motion.div
                           initial={{ scale: 0, opacity: 0 }}
-                          animate={{
+                          animate={shouldReduceMotion ? { opacity: 1 } : {
                             scale: [1, 1.25, 0.95, 1.2, 1],
                             opacity: [0.9, 1, 0.85, 1, 0.9],
                             y: [0, -3, 1, -2, 0],
@@ -401,11 +448,13 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
                         // Volumetric Animated Rising Smoke Trail
                         <motion.div
                           initial={{ opacity: 0.9, y: 0, scale: 0.8 }}
-                          animate={{ opacity: 0, y: -45, x: charIdx === 0 ? -15 : 15, scale: 1.8 }}
+                          animate={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -45, x: charIdx === 0 ? -15 : 15, scale: 1.8 }}
                           transition={{ duration: 2.2 }}
-                          className="text-base select-none"
+                          className="relative h-8 w-8 select-none"
+                          aria-hidden="true"
                         >
-                          💨
+                          <span className="absolute bottom-0 left-1 h-3 w-3 rounded-full bg-slate-300/45 blur-[1px]" />
+                          <span className="absolute right-1 top-1 h-4 w-4 rounded-full bg-slate-200/35 blur-[2px]" />
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -425,7 +474,7 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
                     {!candlesBlown ? (
                       <motion.div
                         initial={{ scale: 0, opacity: 0 }}
-                        animate={{
+                        animate={shouldReduceMotion ? { opacity: 1 } : {
                           scale:
                             candleStyle === 'sparkler'
                               ? [1, 1.4, 1.05, 1.45, 1]
@@ -456,7 +505,7 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
                       >
                         <div className="h-3 w-1.5 rounded-full bg-white blur-[1px]" />
                         {candleStyle === 'sparkler' && (
-                          <div className="absolute -inset-1.5 rounded-full border border-yellow-300 animate-ping opacity-60" />
+                          <div className={`absolute -inset-1.5 rounded-full border border-yellow-300 opacity-60 ${shouldReduceMotion ? '' : 'animate-ping'}`} />
                         )}
                         {candleStyle === 'heart' && (
                           <Heart className="h-3 w-3 text-white fill-white absolute" />
@@ -466,16 +515,18 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
                       // Volumetric Animated Smoke Trails
                       <motion.div
                         initial={{ opacity: 0.9, y: 0, scale: 0.7 }}
-                        animate={{
+                        animate={shouldReduceMotion ? { opacity: 0 } : {
                           opacity: 0,
                           y: -45,
                           x: candleIndex % 2 === 0 ? 14 : -14,
                           scale: 2,
                         }}
                         transition={{ duration: 2.2, ease: 'easeOut' }}
-                        className="text-base select-none pointer-events-none"
+                        className="relative h-8 w-8 select-none pointer-events-none"
+                        aria-hidden="true"
                       >
-                        💨
+                        <span className="absolute bottom-0 left-1 h-3 w-3 rounded-full bg-slate-300/45 blur-[1px]" />
+                        <span className="absolute right-1 top-1 h-4 w-4 rounded-full bg-slate-200/35 blur-[2px]" />
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -518,16 +569,30 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
               }`}
             >
               {cakeStyle === 'strawberry-velvet' && (
-                <div className="flex gap-4 text-base">
-                  <span>🍓</span>
-                  <span>🍓</span>
-                  <span>🍓</span>
+                <div className="flex gap-4" aria-hidden="true">
+                  {[0, 1, 2].map((berry) => (
+                    <span key={berry} className="h-4 w-4 rounded-full bg-rose-500 border-2 border-rose-200 shadow-sm" />
+                  ))}
                 </div>
               )}
               {cakeStyle === 'royal-gold' && <Crown className="h-5 w-5 text-amber-400" />}
-              {cakeStyle === 'rose-petal' && <span className="text-sm">🌹 🌹 🌹</span>}
-              {cakeStyle === 'chocolate-truffle' && <span className="text-sm">🍫 🌰 🍫</span>}
-              {cakeStyle === 'rainbow-celestial' && <span className="text-sm">⭐ 🌈 ⭐</span>}
+              {cakeStyle === 'rose-petal' && (
+                <div className="flex gap-2 text-rose-600" aria-hidden="true">
+                  <Heart className="h-4 w-4 fill-current -rotate-12" />
+                  <Heart className="h-5 w-5 fill-current" />
+                  <Heart className="h-4 w-4 fill-current rotate-12" />
+                </div>
+              )}
+              {cakeStyle === 'chocolate-truffle' && (
+                <div className="flex gap-2" aria-hidden="true">
+                  {[0, 1, 2].map((truffle) => (
+                    <span key={truffle} className="h-4 w-4 rounded-full bg-amber-950 border border-amber-600 shadow-inner" />
+                  ))}
+                </div>
+              )}
+              {cakeStyle === 'rainbow-celestial' && (
+                <Sparkles className="h-5 w-5 text-violet-200" aria-hidden="true" />
+              )}
               {cakeStyle === 'cyber-neon' && <Zap className="h-4 w-4 text-cyan-400" />}
             </div>
 
@@ -559,9 +624,9 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
               <div className="flex items-center gap-2 font-bold text-sm tracking-wide z-10">
                 {cakeStyle === 'royal-gold' ? (
                   <div className="text-amber-300 flex items-center gap-1.5 font-cinzel text-base tracking-widest">
-                    <span>👑</span>
+                    <Crown className="h-4 w-4" aria-hidden="true" />
                     <span>FOR {page.recipientName.toUpperCase()}</span>
-                    <span>👑</span>
+                    <Crown className="h-4 w-4" aria-hidden="true" />
                   </div>
                 ) : cakeStyle === 'rose-petal' ? (
                   <div className="text-pink-900 flex items-center gap-1.5 font-serif italic text-base">
@@ -571,17 +636,17 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
                   </div>
                 ) : cakeStyle === 'chocolate-truffle' ? (
                   <div className="text-amber-200 flex items-center gap-2 font-serif text-sm">
-                    <span>✨</span>
+                    <Sparkles className="h-4 w-4" aria-hidden="true" />
                     <span>Pure Joy for {page.recipientName}</span>
-                    <span>✨</span>
+                    <Sparkles className="h-4 w-4" aria-hidden="true" />
                   </div>
                 ) : cakeStyle === 'rainbow-celestial' ? (
                   <div className="text-white flex items-center gap-1.5 font-bold text-sm tracking-wide">
-                    <span>⭐</span>
+                    <Sparkles className="h-4 w-4 text-yellow-200" aria-hidden="true" />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-cyan-300">
                       Happy Celebration, {page.recipientName}!
                     </span>
-                    <span>⭐</span>
+                    <Sparkles className="h-4 w-4 text-cyan-200" aria-hidden="true" />
                   </div>
                 ) : cakeStyle === 'cyber-neon' ? (
                   <div className="text-cyan-300 font-mono tracking-wider flex items-center gap-1.5">
@@ -617,12 +682,12 @@ export default function InteractiveFinale({ page }: InteractiveFinaleProps) {
                 initial={{ opacity: 0, scale: 0.2, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ type: 'spring', damping: 12, stiffness: 180 }}
+                transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', damping: 12, stiffness: 180 }}
                 className="absolute -top-20 left-1/2 -translate-x-1/2 z-40 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 text-slate-950 font-black py-3 px-8 rounded-full shadow-[0_0_45px_rgba(245,158,11,0.7)] border-2 border-white flex items-center gap-2.5 whitespace-nowrap text-sm sm:text-base font-syne tracking-wide"
               >
-                <Sparkles className="h-5 w-5 fill-slate-950 animate-spin" style={{ animationDuration: '4s' }} />
-                <span>✦ WISH GRANTED! CELEBRATION UNLEASHED ✦</span>
-                <Sparkles className="h-5 w-5 fill-slate-950 animate-spin" style={{ animationDuration: '4s' }} />
+                <Sparkles className={`h-5 w-5 fill-slate-950 ${shouldReduceMotion ? '' : 'animate-spin'}`} style={{ animationDuration: '4s' }} />
+                <span>Wish granted — celebration unlocked</span>
+                <Sparkles className={`h-5 w-5 fill-slate-950 ${shouldReduceMotion ? '' : 'animate-spin'}`} style={{ animationDuration: '4s' }} />
               </motion.div>
             )}
           </AnimatePresence>
