@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import '@/styles/brand.css';
 
 export const metadata: Metadata = {
   title: 'Wishly – Custom Occasion Page Generator',

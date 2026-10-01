@@ -12,7 +12,7 @@ their existing styles.
   greeting and theme inspiration cards.
 - `styles/landing-ornaments.css`: 24 deterministic animated confetti shapes.
 
-Together these files contain 4,916 lines of readable CSS. Theme
+Together these files contain approximately 4,900 lines of readable CSS. Theme
 recipes and confetti are generated from a small maintained source:
 
 ```sh

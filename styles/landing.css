@@ -78,21 +78,6 @@
 .wl-logo {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 32px;
-  font-weight: 800;
-  letter-spacing: -2px;
-  color: var(--wl-ink);
-}
-.wl-logo > span:first-child {
-  color: var(--wl-accent);
-  font-size: 36px;
-  font-weight: 400;
-  margin-right: 3px;
-}
-.wl-logo-dot {
-  margin-left: -8px;
-  color: var(--wl-accent);
 }
 .wl-nav {
   display: flex;
@@ -1218,12 +1203,6 @@
   gap: 25px;
   padding-block: 45px;
 }
-.wl-footer .wl-logo {
-  font-size: 26px;
-}
-.wl-footer .wl-logo > span:first-child {
-  font-size: 28px;
-}
 .wl-footer p {
   font-size: 9px;
   color: #8a9181;
@@ -1431,10 +1410,6 @@
     padding-inline: 20px;
     height: 75px;
     gap: 10px;
-  }
-
-  .wl-logo {
-    font-size: 29px;
   }
 
   .wl-header-actions {
