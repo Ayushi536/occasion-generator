@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+      - "feature/**"
+  pull_request:
+    branches:
+      - dev
+      - main
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      MONGODB_URI: mongodb://localhost:27017/wishly_ci
+      JWT_SECRET: ci-test-secret
+      CLOUDINARY_CLOUD_NAME: ci-placeholder
+      CLOUDINARY_API_KEY: ci-placeholder
+      CLOUDINARY_API_SECRET: ci-placeholder
+      CLOUDINARY_UPLOAD_FOLDER: wishly
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Production build
+        run: bun run build
