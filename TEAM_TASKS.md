@@ -1,269 +1,223 @@
-# TEAM TASKS — LIVE EXAM BOARD
+# Wishly — Team Tasks & Integration Board
 
-> Update this file after meaningful work. This is the team's live source of truth.
+> Single source of truth for module ownership, implementation state and final integration.
 
-## Current Phase
+## 1. Team Structure
 
-**Phase:** 0 — Plan / Foundation
-
-**Last Updated:** TBD
-
----
-
-## Team Members
-
-| Member | Name | Branch | Ownership | Status |
-|---|---|---|---|---|
-| M1 | TBD | feature/m1-templates | Motion / Public Page / Templates | 🟡 |
-| M2 | TBD | feature/m2-wizard | Frontend / Wizard / Dashboard | 🟡 |
-| M3 | TBD | feature/m3-backend | Backend / DB / Auth / APIs | 🟡 |
-| M4 | TBD | feature/m4-media | Media / Cloudinary / Sharing | 🟡 |
-| M5 | TBD | feature/m5-devops | DevOps / QA / Docs | 🟡 |
+| Module | GitHub | Ownership |
+|---|---|---|
+| M1 | `Ayush-Agrawal673` | Motion / Public Wish Page / Templates |
+| M2 | `Aryan-222005` | Creator Frontend / Wizard / Dashboard |
+| M3 | `Ayushibansal805` | Backend / Authentication / APIs / Data Layer |
+| M4 | `ayushagrawalgla` | Media / Cloudinary |
+| M5 | `Ayushi536` | DevOps / Integration / QA / Documentation |
 
 ---
 
-# P0 MASTER CHECKLIST
+## 2. Branch Strategy
 
-## Auth
-- [ ] Signup
-- [ ] Login
+```text
+main  ← final release
+  ↑
+dev   ← integration branch
+  ↑
+feature/m1-templates
+feature/m2-wizard
+feature/m3-backend
+feature/m4-media
+feature/m5-devops
+```
+
+### Integration rule
+
+Every module is developed on its feature branch, integrated into `dev`, validated there, then promoted from `dev` to `main`.
+
+---
+
+## 3. Module Status
+
+### M1 — Public Wish Page / Templates
+
+**Owner:** `Ayush-Agrawal673`
+
+- [x] Wishly public experience foundation
+- [x] Public wish page UI foundation
+- [x] Template / visual foundation
+- [x] Feature branch merged into `dev`
+- [x] Integrated into `main`
+
+### M2 — Creator Frontend
+
+**Owner:** `Aryan-222005`
+
+- [x] Creator frontend foundation
+- [x] Dashboard foundation
+- [x] Creation flow
+- [x] Review flow
+- [x] Feature branch merged into `dev`
+- [x] Integrated into `main`
+
+### M3 — Backend / Auth / Data
+
+**Owner:** `Ayushibansal805`
+
+- [x] Auth API surface
+- [x] User/session handling
+- [x] Page CRUD API surface
+- [x] AI API routes
+- [x] Admin API surface
+- [x] Current data-layer implementation
+- [x] Feature branch merged into `dev`
+- [x] Integrated into `main`
+
+### M4 — Media / Cloudinary
+
+**Owner:** `ayushagrawalgla`
+
+- [x] Cloudinary configuration
+- [x] Upload API
+- [x] Cloudinary package / lockfile update
+- [x] Feature branch merged into `dev`
+- [x] Integrated into `main`
+
+> GitHub account used for the M4 commits is `ayushagrawalgla`.
+
+### M5 — DevOps / QA / Documentation
+
+**Owner:** `Ayushi536`
+
+- [x] Repository / branch coordination
+- [x] `.env.example` baseline
+- [x] Integration from `origin/dev` into M5 branch
+- [x] GitHub Actions CI workflow
+- [x] Correct M5 commit identity
+- [x] M5 branch merged into `dev`
+- [x] `dev` merged into `main`
+- [x] Local `main` synced with `origin/main`
+- [ ] Execute final end-to-end QA matrix
+- [ ] Verify production deployment
+- [ ] Add live URL and demo video
+- [ ] Final README polish after live verification
+
+---
+
+## 4. CI Workflow
+
+**File:** `.github/workflows/ci.yml`
+
+Current quality flow:
+
+```text
+Checkout
+   ↓
+Setup Bun
+   ↓
+bun install --frozen-lockfile
+   ↓
+bun run lint
+   ↓
+bun run build
+```
+
+Triggers include pushes to `dev`, `main` and feature branches, plus pull requests into `dev` / `main`.
+
+---
+
+## 5. Git Integration Record
+
+### M5 branch
+
+The final M5 CI commit was authored with the M5 identity:
+
+```text
+Ayushi536 <ayu704sharma32@gmail.com>
+```
+
+### Integration path
+
+```text
+feature/m5-devops
+      ↓
+      dev
+      ↓
+      main
+```
+
+The final repository was checked locally with:
+
+```text
+git status
+On branch main
+Your branch is up to date with 'origin/main'.
+nothing to commit, working tree clean
+```
+
+---
+
+## 6. Final QA Matrix
+
+### Authentication
+
+- [ ] Signup with valid values
+- [ ] Login with valid credentials
+- [ ] Reject invalid credentials
 - [ ] Logout
-- [ ] Protected dashboard
-- [ ] Seeded admin
+- [ ] `/api/auth/me` reflects session state
 
-## Wizard
-- [ ] Occasion
-- [ ] Recipient
-- [ ] Words
-- [ ] Language
-- [ ] Media
-- [ ] Style
-- [ ] Review
-- [ ] Validation
-- [ ] Generate
+### Creator flow
 
-## Language
-- [ ] English
-- [ ] Hinglish
-- [ ] Hindi
-- [ ] Devanagari font
+- [ ] Open dashboard
+- [ ] Create page
+- [ ] Add / edit page content
+- [ ] Select template
+- [ ] Upload media
+- [ ] Review page
+- [ ] Publish / open public URL
 
-## Media
-- [ ] Cloudinary
-- [ ] Up to 15 images
-- [ ] Up to 2 videos
-- [ ] Register media
+### Public experience
 
-## Templates
-- [ ] Template 1
-- [ ] Template 2
-- [ ] Template 3
+- [ ] Open `/w/[slug]`
+- [ ] Verify all core sections render
+- [ ] Submit a guest wish
+- [ ] Trigger candle interaction
+- [ ] Refresh and verify persistence
 
-## Generation
-- [ ] Unique slug
-- [ ] Stored page
-- [ ] Public URL
+### AI
 
-## Sharing
-- [ ] Copy link
-- [ ] QR
-- [ ] WhatsApp/share
+- [ ] Generate wish through UI
+- [ ] Handle missing / invalid AI input
+- [ ] Verify server-side handling of provider secrets
 
-## Generated Page
-- [ ] Loader
-- [ ] Parallax hero
-- [ ] Message/typewriter
-- [ ] Gallery reveal
-- [ ] Finale/confetti
+### Admin
 
-## Dashboard
-- [ ] List pages
-- [ ] Edit
-- [ ] Duplicate
-- [ ] Delete
-- [ ] Unpublish
+- [ ] Open admin area with admin account
+- [ ] Verify protected access behavior
+
+### Build / CI
+
+- [ ] `bun install --frozen-lockfile`
+- [ ] `bun run lint`
+- [ ] `bun run build`
+- [ ] GitHub Actions run checked
+
+### Deployment
+
+- [ ] Production env variables configured
+- [ ] Production build succeeds
+- [ ] Live URL opens
+- [ ] Cloudinary upload works in deployment
+- [ ] Public wish URL works in deployment
 
 ---
 
-# MEMBER 1 — MOTION / PUBLIC PAGE
+## 7. Submission Checklist
 
-## Tasks
-- [ ] Template registry
-- [ ] Shared animated sections
-- [ ] Template 1
-- [ ] Template 2
-- [ ] Template 3
-- [ ] Public `/w/[slug]`
-- [ ] Hero/parallax
-- [ ] Message reveal
-- [ ] Gallery
-- [ ] Finale
-- [ ] Mobile
-- [ ] Reduced motion
-
-## Files Changed
-
-| File | Change | Status |
-|---|---|---|
-| TBD | TBD | ⬜ |
-
----
-
-# MEMBER 2 — FRONTEND / WIZARD / DASHBOARD
-
-## Tasks
-- [ ] Landing
-- [ ] Login/signup UI
-- [ ] Wizard shell
-- [ ] Step 1
-- [ ] Step 2
-- [ ] Step 3
-- [ ] Step 4
-- [ ] Step 5
-- [ ] Step 6
-- [ ] Preview
-- [ ] Dashboard
-- [ ] Edit
-- [ ] Insights
-- [ ] Mobile
-
-## Files Changed
-
-| File | Change | Status |
-|---|---|---|
-| TBD | TBD | ⬜ |
-
----
-
-# MEMBER 3 — BACKEND / DB / AUTH
-
-## Tasks
-- [ ] MongoDB connection
-- [ ] User model
-- [ ] Page model
-- [ ] Template model
-- [ ] Wish model
-- [ ] PageView model
-- [ ] Auth
-- [ ] Page CRUD
-- [ ] Publish
-- [ ] Public page API
-- [ ] Wishes API
-- [ ] Views API
-- [ ] Admin API
-- [ ] Validation
-- [ ] Security
-- [ ] Error middleware
-
-## API Changes
-
-| Endpoint | Change | Status |
-|---|---|---|
-| TBD | TBD | ⬜ |
-
----
-
-# MEMBER 4 — MEDIA / SHARING
-
-## Tasks
-- [ ] Cloudinary config
-- [ ] Signed upload
-- [ ] Media registration
-- [ ] Upload validation
-- [ ] Compression
-- [ ] Progress
-- [ ] Reorder
-- [ ] Delete
-- [ ] QR
-- [ ] Copy link
-- [ ] WhatsApp/share
-- [ ] OG image
-
-## Files Changed
-
-| File | Change | Status |
-|---|---|---|
-| TBD | TBD | ⬜ |
-
----
-
-# MEMBER 5 — DEVOPS / QA / DOCS
-
-## Tasks
-- [ ] GitHub repo
-- [ ] Branch setup
-- [ ] `.env.example`
-- [ ] Seed data
-- [ ] Deployment
-- [ ] Integration
-- [ ] QA
-- [ ] SPEC.md
-- [ ] TEAM_TASKS.md
-- [ ] PROMPTS.md
-- [ ] README.md
-- [ ] Demo assets
-- [ ] Final submission check
-
----
-
-# INTEGRATION TRACKER
-
-| Feature | Owner | Dependency | Status | Tested |
-|---|---|---|---|---|
-| Auth | M3 | M2 | ⬜ | ⬜ |
-| Wizard | M2 | M3 | ⬜ | ⬜ |
-| Media | M4 | M2/M3 | ⬜ | ⬜ |
-| Templates | M1 | M3 page schema | ⬜ | ⬜ |
-| Publish | M3/M4 | M1/M2/M4 | ⬜ | ⬜ |
-| Public page | M1 | M3 | ⬜ | ⬜ |
-| Dashboard | M2 | M3 | ⬜ | ⬜ |
-| Sharing | M4 | Publish | ⬜ | ⬜ |
-| Deployment | M5 | All | ⬜ | ⬜ |
-
----
-
-# KNOWN BUGS
-
-| ID | Bug | Owner | Severity | Status |
-|---|---|---|---|---|
-| B-001 | TBD | TBD | TBD | Open |
-
-# API CONTRACT CHANGES
-
-| Date | Endpoint/Field | Old | New | Reason | Members Notified |
-|---|---|---|---|---|---|
-| TBD | TBD | TBD | TBD | TBD | TBD |
-
-# DB CHANGES
-
-| Date | Collection | Change | Owner |
-|---|---|---|---|
-| TBD | TBD | TBD | TBD |
-
-# GIT / MERGE ISSUES
-
-| Date | Branch | Issue | Resolution |
-|---|---|---|---|
-| TBD | TBD | TBD | TBD |
-
-# DEPLOYMENT
-
-- Frontend: TBD
-- Backend: TBD
-- Database: MongoDB Atlas
-- Media: Cloudinary
-- Build: ⬜
-- Production smoke test: ⬜
-
-# FINAL FREEZE CHECK
-
-- [ ] All P0 tested
-- [ ] No unresolved merge conflicts
-- [ ] Every member has commits
-- [ ] README complete
-- [ ] PROMPTS.md complete
-- [ ] `.env.example` complete
-- [ ] Live links work
-- [ ] Sample pages work
-- [ ] Mobile tested
-- [ ] No secrets
+- [x] GitHub repository public
+- [x] `main` integrated
+- [x] Feature modules merged
+- [x] CI workflow committed
+- [x] README / SPEC / TEAM_TASKS / PROMPTS present
+- [ ] Live URL added
+- [ ] Demo video added
+- [ ] Final QA completed
+- [ ] Submission form updated with final links
